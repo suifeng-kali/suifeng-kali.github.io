@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CNVD原创证书获取姿势 | 随风</title><meta name="author" content="随风"><meta name="copyright" content="随风"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="0x01 前言挖CNVD证书是在准备出去实习的时候，想着挖个CNVD证书丰富一下自己的简历，再到后来挖CNVD证书完全是因为众测实在是太卷了，出洞率低，重洞率高，导致自己经常挖完众测之后就emo，然后去挖CNVD找一些存在感。很多师傅感觉挖CNVD证书很难，要挖掘0day出来。确实，要挖0day，听起来确实是挺困难的，但是挖CNVD证书不像是众测有限定的资产，互联网上存在的系统数不胜数，我们只需要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CNVD原创证书获取姿势">
+<meta property="og:url" content="http://suifeng-kali.github.io/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/index.html">
+<meta property="og:site_name" content="随风">
+<meta property="og:description" content="0x01 前言挖CNVD证书是在准备出去实习的时候，想着挖个CNVD证书丰富一下自己的简历，再到后来挖CNVD证书完全是因为众测实在是太卷了，出洞率低，重洞率高，导致自己经常挖完众测之后就emo，然后去挖CNVD找一些存在感。很多师傅感觉挖CNVD证书很难，要挖掘0day出来。确实，要挖0day，听起来确实是挺困难的，但是挖CNVD证书不像是众测有限定的资产，互联网上存在的系统数不胜数，我们只需要">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://suifeng-kali.github.io/images/pasted-2.png">
+<meta property="article:published_time" content="2023-04-30T01:36:00.000Z">
+<meta property="article:modified_time" content="2023-04-30T01:54:55.930Z">
+<meta property="article:author" content="随风">
+<meta property="article:tag" content="漏洞挖掘">
+<meta property="article:tag" content="Web安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://suifeng-kali.github.io/images/pasted-2.png"><link rel="shortcut icon" href="https://suifeng-kali.github.io/img/logo.jpg"><link rel="canonical" href="http://suifeng-kali.github.io/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":380},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 随风","link":"链接: ","source":"来源: 随风","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CNVD原创证书获取姿势',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-04-30 09:54:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/images/pasted-2.png')"><nav id="nav"><span id="blog-info"><a href="/" title="随风"><span class="site-name">随风</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CNVD原创证书获取姿势</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-30T01:36:00.000Z" title="发表于 2023-04-30 09:36:00">2023-04-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-30T01:54:55.930Z" title="更新于 2023-04-30 09:54:55">2023-04-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Web%E5%AE%89%E5%85%A8/">Web安全</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CNVD原创证书获取姿势"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h1><p>挖CNVD证书是在准备出去实习的时候，想着挖个CNVD证书丰富一下自己的简历，再到后来挖CNVD证书完全是因为众测实在是太卷了，出洞率低，重洞率高，导致自己经常挖完众测之后就emo，然后去挖CNVD找一些存在感。很多师傅感觉挖CNVD证书很难，要挖掘0day出来。确实，要挖0day，听起来确实是挺困难的，但是挖CNVD证书不像是众测有限定的资产，互联网上存在的系统数不胜数，我们只需要利用一些小技巧，找到满足发放证书的系统，然后在这里面去寻找相对薄弱的系统来进行挖掘，这样相对来说挖掘到证书的概率还是相对来说大上不少的。到写文章为止，除去还有几份未审核完的报告，我自己是存在4张CNVD证书的。在证书挖掘过程中，自己并未太刻意深入的去挖掘，非要说刻意去干的一件事还是在寻找CNVD证书发放条件的资产上。以下就总结一下自己挖掘CNVD证书的小技巧，希望对师傅们以后挖掘CNVD证书有所帮助。</p>
+<h1 id="0x02-概览"><a href="#0x02-概览" class="headerlink" title="0x02 概览"></a>0x02 概览</h1><p>大致画了个思维导图（感觉不清楚的，可以加我微信，我发原图给师傅）<br><img src="/images/pasted-5.png" alt="upload successful"></p>
+<h1 id="0x03-证书获取条件"><a href="#0x03-证书获取条件" class="headerlink" title="0x03 证书获取条件"></a>0x03 证书获取条件</h1><p>条件一：通用漏洞（网上没有记录—0day）</p>
+<p>条件二：公司注册资金超过5000万</p>
+<p>条件三：所提交漏洞获得中危及中危以上评分</p>
+<p>条件四：互联网可复现案例需要三例（建议多放几例，防止审核过程中存在案例失效，我一般放10）</p>
+<p>or</p>
+<p>事件型漏洞必须是三大运营商（移动、联通、电信）的中高危漏洞，或者党政机关、重要行业单位、科研院所、重要企事业单位（如：中央国有大型企业、部委直属事业单位等）的高危事件型漏洞才会颁发原创漏洞证书</p>
+<h1 id="0x04-白盒挖掘"><a href="#0x04-白盒挖掘" class="headerlink" title="0x04 白盒挖掘"></a>0x04 白盒挖掘</h1><p>自己最初挖CNVD的时候是采用白盒的方式来挖取的，什么是白盒，就是找一些开源的系统，直接去审计代码，但是慢慢我在尝试挖掘的过程中发现一件尴尬的事。遇到小型的系统（厂商），挖掘出来漏洞，但是不满足证书发放的条件。遇到中型的系统（厂商），会碰到一些扯皮的厂商，说是开源项目，不在管辖范围中之内（翻译一下就是你们用的我开源的产品，没收你们钱，出了问题是你们自己的事）</p>
+<p><img src="/images/pasted-6.png" alt="upload successful"></p>
+<p>哎，格局呢。遇到大型的系统（厂商），其对代码审计的能力要求比较高，所以比较难审计出洞，所以慢慢的后面我就改变思路改为黑盒挖去了。那为什么还要写白盒挖取这个，是因为有一些代码审计能力比较强的师傅，可以考虑一下这种挖掘方式，毕竟白盒的挖掘方式比黑盒更容易出洞。</p>
+<h1 id="0x05-黑盒挖掘"><a href="#0x05-黑盒挖掘" class="headerlink" title="0x05 黑盒挖掘"></a>0x05 黑盒挖掘</h1><p>主要还是写写黑盒挖掘，自己的证书也全是黑盒挖掘过来的。那在挖掘CNVD证书的过程中，我认为最重要的一部分还是在选择挖掘目标上面。那怎么样去寻找满足发放证书条件的目标呢，以下有三个方法。</p>
+<p>① 利用空间测绘寻找</p>
+<p>② 利用脚本寻找</p>
+<p>③ 在CNVD官网寻找</p>
+<p>首先来讲讲第一个方法：利用空间测绘，这里以fofa为例</p>
+<p>我们可以搜索一些常见的系统可能使用的名称，比如说”管理系统”、”登录系统”、”某某平台”等等</p>
+<p><img src="/images/pasted-8.png" alt="upload successful"></p>
+<p>还可以利用组合语法如一些常见登录系统会使用到的一些js文件，css文件等去进行寻找,比如</p>
+<p><img src="/images/pasted-11.png" alt="upload successful"></p>
+<p>然后找到这些系统之后，看看归属于哪个公司，判断其归属于哪个公司，最好用的方法就是，在这种技术支持上去看是属于哪个公司</p>
+<p><img src="/images/pasted-13.png" alt="upload successful"></p>
+<p>当然也有一些系统是没有这种技术支持的，这个时候我们就需要一些其他的方法去判断其归属于哪个公司，有源代码中有注释的，有进后台发现某某公司开发的，反正找归属是个细心活，没有太多的技巧。找到归属于哪一个公司之后的话，我们就可以利用爱企查等查企业信息等网址对该公司做一个查询，看看其注册资产</p>
+<p><img src="/images/pasted-15.png" alt="upload successful"></p>
+<p>注册资产超过5000万，这套系统就满足发放证书的基本条件了，我们就可以进行一个挖掘，假如没超过5000万，我们就不用进行挖掘了，因为即使是挖到了洞，也不满足发放证书的条件。本人自己在最初挖掘CNVD证书的时候就是利用空间测绘这种方法，找满足条件的系统，然后进行挖掘。自己第一次挖掘CNVD的时候也是利用这种方法，也是有幸挖掘到一个Elastic的一个0day，然后申请了如下证书。</p>
+<p><img src="/images/pasted-17.png" alt="upload successful"></p>
+<p>这种寻找目标的劣势也很明显，第一就是寻找系统不够精准（需要手动去确定目标是否满足发放证书条件），第二就是需要我们去确定该套系统属于哪一个厂商。就如上两个问题就会浪费大量的时间，导致效率非常的低，所以不是很推荐这种寻找目标的方法。</p>
+<p>第二个方法：利用脚本寻找</p>
+<p>具体脚本如下文</p>
+<p>快速获得CNVD证书的小技巧</p>
+<p>作者：OceanSec<br>文章来源于<a target="_blank" rel="noopener" href="https://oceansec.blog.csdn.net/">https://oceansec.blog.csdn.net/</a><br>这个脚本我自己没有使用过，不过其导出5000万漏洞资产，然后再结合一些工具半自动化测试确实适合快速去刷洞。</p>
+<p>第三个方法：在CNVD官网寻找</p>
+<p>这也是我自己使用最多的一个方法，怎么利用CNVD官网去寻找目标呢，首先来到CNVD官网。</p>
+<p>在漏洞列表处，可以看到以往发生的安全漏洞，然后我自己比较喜欢寻找WEB应用的系统，所以我会选择一个WEB应用分类，当然师傅们也可以更具自己擅长挖掘的东西来进行选择。</p>
+<p><img src="/images/pasted-19.png" alt="upload successful"></p>
+<p>可以看到其会报道处某某公司的某某系统存在某某漏洞</p>
+<p><img src="/images/pasted-23.png" alt="upload successful"></p>
+<p>比如这里有个某某公司，那我们就可以利用爱企查去查询一下这个公司的注册资产，如果超过5000万，满足发放证书条件，那我们就可以根据这个提示去试着寻找一下这个系统，找到之后呢，我们可以利用我们平常的测试手段，尽量模仿打一下CNVD官网所通报出来的漏洞，据我打过多个的经验来看，大多数都是能打到的，找到漏洞点进行漏洞复现的。当然测试到了漏洞点，你可以尝试提交一下，不过百分之99的概率是重复的，既然重复为什么还要在这寻找目标呢。</p>
+<p>① 其实这个系统爆出一个漏洞，其实在某种程度上，其系统的安全性就与其他相比来说较低的，那我们就可以对这个系统进行一个详细的测试，细心一点测试的话，你就会收获到一些惊喜。</p>
+<p>② 有些系统我们测试一下弱口令，假如我们测试出来弱口令（web应用系统的弱口令CNVD是不收录的），我们可以进入后台再进行一个深度挖掘。</p>
+<p>③ 假如CNVD爆出的是某某可以getshell的漏洞，我们可以尝试复现，假如复现成功的话，我们可以把源代码打包备份一份出来，进行一个黑盒加白盒的深度测试。</p>
+<p>其上三个方法呢，由前到后提交漏洞重复的概率会依次降低。在发现存在某个漏洞后，我们还可以去寻找该公司的其他系统，看看该公司其他公司是否也存在该种类型的漏洞（因为一个公司不同的系统很有可能是一个开发团队写出来的，一个系统存在问题，那么其开发的另一个系统也很大概率存在该问题），那么怎么寻找该公司的其他问题呢。我们利用爱企查查询一个企业过后，我们可以来到知识产权，然后点击软件著作权信息。</p>
+<p><img src="/images/pasted-25.png" alt="upload successful"></p>
+<p>这里就可以寻找一些该公司开发的其他公司系统信息</p>
+<p><img src="/images/pasted-27.png" alt="upload successful"></p>
+<p>运气好碰到类似的系统的话，就可以开心地把一份报告变成两份报告，拿两份证书。</p>
+<h1 id="0x06-挖掘思路"><a href="#0x06-挖掘思路" class="headerlink" title="0x06 挖掘思路"></a>0x06 挖掘思路</h1><p>掌握了收集资产的方法，接下来需要的就是一定的挖掘技巧，在挖CNVD的过程中也存在一些经常挖到的漏洞种类和一些小小的挖掘技巧。</p>
+<p>① 大型框架导致的漏洞（如log4j2，shiro身份绕过等等）</p>
+<p>大型框架导致的0day，特别是最新爆发的核弹级漏洞log4j2，在平常的测试过程中可以注意一下这种框架漏洞。（log4j2证书鉴赏）</p>
+<p><img src="/images/pasted-28.png" alt="upload successful"></p>
+<p>② 目录扫描、源代码、js文件、修改请求返回状态码探针后台地址挖掘未授权漏洞</p>
+<p>自己在挖掘这些系统的时候，经常可以挖掘都未授权访问漏洞，挖掘未授权的方法，我们可以使用目录扫描，在源代码中、js文件中查看一些后台的url，还可以通过修改请求的状态码如把0改为1，false改为true等让系统跳转后台地址等。</p>
+<p>③ 通过弱口令进入后台挖掘</p>
+<p>前台的功能点功能较少，假如某个系统存在弱口令，我们就可以进入后台，扩大我们的攻击面（挖掘例子如下）</p>
+<p>详细记录一次CNVD原创漏洞证书挖掘过程</p>
+<p>④ 设备弱口令漏洞</p>
+<p>虽然CNVD已经不收录WEB应用的弱口令的通用洞了，但是一些设备的弱口令漏洞其还是正常收录的。当然设备弱口令你挖掘到非常简单，但是你想挖掘到没有重复的那也是相当的卷，所以你想通过挖掘设备弱口令来获取证书的话，你就要去时刻关注这些设备厂商的动态，在其发布新设备的第一时间就去测试该新设备的弱口令，然后用上你最快的手速写好报告，提交报告，然后坐等证书。</p>
+<p>⑤ RCE打包源码进行代码审计</p>
+<p>当你RCE一个系统的时候，你可以把该系统的源代码打包一份出来，然后通过白盒的方式去审核源代码，进一步扩大战果。</p>
+<h1 id="0x07-结尾"><a href="#0x07-结尾" class="headerlink" title="0x07 结尾"></a>0x07 结尾</h1><p>大概挖掘思路就是这些，当然可能还有一些没有想到的没有写上来，以后想起来的单独写写。</p>
+<p><img src="/images/pasted-29.png" alt="upload successful"></p>
+<p>最后祝师傅们证书满满。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io">随风</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/">http://suifeng-kali.github.io/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://suifeng-kali.github.io" target="_blank">随风</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/">漏洞挖掘</a><a class="post-meta__tags" href="/tags/Web%E5%AE%89%E5%85%A8/">Web安全</a></div><div class="post_share"><div class="social-share" data-image="/images/pasted-2.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/04/30/URLDNS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="URLDNS反序列化链分析"><img class="cover" src="/assets/image-20230423173846-krvusbm.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">URLDNS反序列化链分析</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">随风</div><div class="author-info__description">记录与分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" href="/img/gzh.png"><i class="fa-brands fa-weixin"></i><span>关注我</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/suifeng-kali" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/img/vx.jpg" target="_blank" title="VX"><i class="fa-brands fa-weixin" style="color: #1BCB53;"></i></a><a class="social-icon" href="https://space.bilibili.com/266524390?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili" style="color: #F75887;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">在这分享分享自己的笔记，记录记录生活。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x01 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-%E6%A6%82%E8%A7%88"><span class="toc-number">2.</span> <span class="toc-text">0x02 概览</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E6%9D%A1%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">0x03 证书获取条件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-%E7%99%BD%E7%9B%92%E6%8C%96%E6%8E%98"><span class="toc-number">4.</span> <span class="toc-text">0x04 白盒挖掘</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05-%E9%BB%91%E7%9B%92%E6%8C%96%E6%8E%98"><span class="toc-number">5.</span> <span class="toc-text">0x05 黑盒挖掘</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x06-%E6%8C%96%E6%8E%98%E6%80%9D%E8%B7%AF"><span class="toc-number">6.</span> <span class="toc-text">0x06 挖掘思路</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x07-%E7%BB%93%E5%B0%BE"><span class="toc-number">7.</span> <span class="toc-text">0x07 结尾</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/" title="CNVD原创证书获取姿势"><img src="/images/pasted-2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CNVD原创证书获取姿势"/></a><div class="content"><a class="title" href="/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/" title="CNVD原创证书获取姿势">CNVD原创证书获取姿势</a><time datetime="2023-04-30T01:36:00.000Z" title="发表于 2023-04-30 09:36:00">2023-04-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/30/URLDNS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="URLDNS反序列化链分析"><img src="/assets/image-20230423173846-krvusbm.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="URLDNS反序列化链分析"/></a><div class="content"><a class="title" href="/2023/04/30/URLDNS%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="URLDNS反序列化链分析">URLDNS反序列化链分析</a><time datetime="2023-04-30T01:22:00.000Z" title="发表于 2023-04-30 09:22:00">2023-04-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/29/%E7%BD%91%E7%AB%99%E5%AE%89%E5%85%A8%E7%8B%97APACHE%E7%89%88V4-0%E7%BB%95%E8%BF%87/" title="网站安全狗APACHE版V4.0绕过"><img src="/assets/image-20220210101102-k2p13gt.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网站安全狗APACHE版V4.0绕过"/></a><div class="content"><a class="title" href="/2023/04/29/%E7%BD%91%E7%AB%99%E5%AE%89%E5%85%A8%E7%8B%97APACHE%E7%89%88V4-0%E7%BB%95%E8%BF%87/" title="网站安全狗APACHE版V4.0绕过">网站安全狗APACHE版V4.0绕过</a><time datetime="2023-04-29T06:05:00.000Z" title="发表于 2023-04-29 14:05:00">2023-04-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/29/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" title="博客搭建"><img src="/img/index.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="博客搭建"/></a><div class="content"><a class="title" href="/2023/04/29/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" title="博客搭建">博客搭建</a><time datetime="2023-04-29T03:29:00.000Z" title="发表于 2023-04-29 11:29:00">2023-04-29</time></div></div></div></div></div></div></main><footer id="footer" style="background: black"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 随风</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'SB4PGikNZrP3JAMCBJNWM9eC-gzGzoHsz',
+      appKey: 'DIgUpJL30T7a2KTMRAWkD2Zq',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,YOU,RedTeam,POC,EXP,Payload,SQLi,XSS,CSRF,XXE,Hack,Security,Sqlmap,Nmap,BurpSuite,Java,Python,Web,RCE,Root,Id,Whoami,CobaltStrike,Metasploit" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
