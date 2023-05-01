@@ -4,6 +4,64 @@
   
     
     <entry>
+      <title>渗透测试如何打造社工字典</title>
+      <link href="/2023/05/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%A6%82%E4%BD%95%E6%89%93%E9%80%A0%E7%A4%BE%E5%B7%A5%E5%AD%97%E5%85%B8/"/>
+      <url>/2023/05/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%A6%82%E4%BD%95%E6%89%93%E9%80%A0%E7%A4%BE%E5%B7%A5%E5%AD%97%E5%85%B8/</url>
+      
+        <content type="html"><![CDATA[<h1 id="爬取页面内容"><a href="#爬取页面内容" class="headerlink" title="爬取页面内容"></a>爬取页面内容</h1><p>利用工具：cewl-&gt;(kali)</p><p>参数详解</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">-h、 --help：显示帮助。</span><br><span class="line">-k、 --keep：保留下载的文件。</span><br><span class="line">-d&lt;x&gt;，--depth&lt;x&gt;：蜘蛛的深度，默认值为2。</span><br><span class="line">-m、 --min_word_length：最小字长，默认值为3。</span><br><span class="line">-o、 --offsite：让spider访问其他站点。</span><br><span class="line">--exclude：包含要排除的路径列表的文件</span><br><span class="line">--allowed：路径必须匹配才能遵循的正则表达式模式</span><br><span class="line">-w、 --write：将输出写入文件。</span><br><span class="line">-u、 --ua&lt;agent&gt;：要发送的用户代理。</span><br><span class="line">-n、 --o-words：不输出单词列表。</span><br><span class="line">--lowercase：将所有分析的单词小写</span><br><span class="line">--with-numbers：接受带有数字和字母的单词</span><br><span class="line">--convert-umlauts：转换通用ISO-8859-1（拉丁语-1）元音（ä-ae，ö-oe，ü-ue，ß-ss）</span><br><span class="line">-a、 --meta：包含元数据。</span><br><span class="line">--meta_file文件：元数据的输出文件。</span><br><span class="line">-e、 --email：包括电子邮件地址。</span><br><span class="line">--email_file&lt;file&gt;：电子邮件地址的输出文件。</span><br><span class="line">--meta-temp dir&lt;dir&gt;：exiftool在解析文件时使用的临时目录，默认为/tmp。</span><br><span class="line">-c、 --count：显示找到的每个单词的计数。</span><br><span class="line">-v、 --verbose：详细。</span><br><span class="line">--debug：额外的调试信息。</span><br><span class="line"></span><br><span class="line">身份验证</span><br><span class="line">--auth_type：摘要或基本。</span><br><span class="line">--auth_user：身份验证用户名。</span><br><span class="line">--auth_pass：身份验证密码。</span><br><span class="line"></span><br><span class="line">代理服务器支持</span><br><span class="line">--proxy_host：代理主机。</span><br><span class="line">--proxy_port：代理端口，默认为8080。</span><br><span class="line">--proxy_username：代理的用户名（如果需要）。</span><br><span class="line">--proxy_password：代理的密码（如果需要）。</span><br><span class="line"></span><br><span class="line">邮件头</span><br><span class="line"></span><br><span class="line">--header，-H：格式名称：value-可以传递多个。</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cewl url -m 3 -d 3 -e -c -v -w a.txt --with-numbers</span><br></pre></td></tr></table></figure><p><img src="/images/pasted-0.png" alt="upload successful"></p><p><img src="/images/pasted-12.png" alt="upload successful"></p><p>可直接使用爬取出的信息做一个爆破，爆破无果可对之前爬取出信息中无用信息做一个简单剔除，然后再结合人工浏览页面筛选出一些带有社工意义的信息，如姓名，电话，联系方法，公司名称等，这些信息的收集我们也可以通过whois反查结合站点的注册人信息，注册人邮箱等。</p><h1 id="社工字典生成"><a href="#社工字典生成" class="headerlink" title="社工字典生成"></a>社工字典生成</h1><p>利用工具：白鹿社工字典为例。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/z3r023/BaiLu-SED-Tool</span><br></pre></td></tr></table></figure><p>对我们之前通过爬取和一起其他手段搜集过来的信息整理号然后把其放入A项结合一些特有弱口令再次生成社工字典</p><p><img src="/images/pasted-14.png" alt="upload successful"></p><p><img src="/images/pasted-16.png" alt="upload successful"></p><p>如果还是无果，我们还可以自己写一个小脚本，去生成用户极有可能设置的社工弱口令然后再与一些常见弱口令进行一个拼接进行爆破。</p><p>该处以姓名：张三为例</p><p>那我们可以写脚本生成如下社工口令</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">zhangsan   //全拼音</span><br><span class="line">zhangs     //全姓简名</span><br><span class="line">zsan       //简姓全名</span><br><span class="line">zs         //简姓简名</span><br><span class="line">张三       //中文名字（还真碰到过用中文作用户名的）</span><br><span class="line">//等等，师傅们发散思维</span><br></pre></td></tr></table></figure><p>可以把我们脚本生成的的社工口令直接进行一个爆破，无果可以再用白鹿社工字典结合一些常见弱口令再次生成社工字典，再次进行爆破。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Web安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Web安全 </tag>
+            
+            <tag> 渗透测试 </tag>
+            
+            <tag> 社会工程学 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>SRC突破边界寻找隐匿资产小技巧（HOSTS碰撞）</title>
+      <link href="/2023/04/30/SRC%E7%AA%81%E7%A0%B4%E8%BE%B9%E7%95%8C%E5%AF%BB%E6%89%BE%E9%9A%90%E5%8C%BF%E8%B5%84%E4%BA%A7%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%88HOSTS%E7%A2%B0%E6%92%9E%EF%BC%89/"/>
+      <url>/2023/04/30/SRC%E7%AA%81%E7%A0%B4%E8%BE%B9%E7%95%8C%E5%AF%BB%E6%89%BE%E9%9A%90%E5%8C%BF%E8%B5%84%E4%BA%A7%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%88HOSTS%E7%A2%B0%E6%92%9E%EF%BC%89/</url>
+      
+        <content type="html"><![CDATA[<h1 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h1><p>在SRC漏洞挖掘中或者渗透测试中，前期收集好各种WEB应用，开心的打开Burpsuite准备大干一场的时候，发现全是403 404 400 500，于是你开始扫描端口、爆破目录，但是什么都没有信息都没有出来，结果灰溜溜的关闭了浏览器和你的Burpsuite。作为安全圈的老混子，碰到这种情况我们该怎么破局呢？</p><h1 id="0x02-HOSTS碰撞"><a href="#0x02-HOSTS碰撞" class="headerlink" title="0x02 HOSTS碰撞"></a>0x02 HOSTS碰撞</h1><p>我们在平常摸鱼中，经常会碰到这样一种情况，直接利用ip访问显示的是403 404 400 500，但是用域名请求就会返回正常业务。当然在排除WAF作祟下（有一些WAF它会要求使用域名访问，使用IP的会出现WAF的拦截界面），我们就可以利用hosts碰撞技术来尝试一下是否能突破边界。</p><h1 id="0x03-漏洞原理"><a href="#0x03-漏洞原理" class="headerlink" title="0x03 漏洞原理"></a>0x03 漏洞原理</h1><p>漏洞产生的根本还是源于配置不当，一些系统配置了内网访问，但是由于配置不当的话，例nginx配置不当，或者nignx default_server没有配置或者配置内网，那么内网的业务可能存在被传出的风险。</p><h1 id="0x04-漏洞利用步骤"><a href="#0x04-漏洞利用步骤" class="headerlink" title="0x04 漏洞利用步骤"></a>0x04 漏洞利用步骤</h1><p>一、收集目标的域名和IP作为字典</p><p>可使用一些工具如oneforall</p><p><img src="/images/pasted-1.png" alt="upload successful"></p><p>也可结合其他工具，搜集的域名和IP越详细越好</p><p>二、利用脚本碰撞</p><p>脚本地址</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/fofapro/Hosts_scan</span><br></pre></td></tr></table></figure><p>将搜集到的域名和IP分别放入hosts.txt 和 ip.txt</p><h1 id="0x05-漏洞复现"><a href="#0x05-漏洞复现" class="headerlink" title="0x05 漏洞复现"></a>0x05 漏洞复现</h1><p>搭建环境</p><p>安装nginx</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost etc]<span class="comment"># yum install -y epel-release</span></span><br><span class="line">[root@localhost etc]<span class="comment"># yum -y update</span></span><br><span class="line">[root@localhost etc]<span class="comment"># yum install -y nginx</span></span><br></pre></td></tr></table></figure><p>配置漏洞环境</p><p>1、设置反向代理</p><p>这里用apache模拟反向代理端口（实际上应该还要创建一个网卡去模拟内网端口，为了省事就模拟一下端口吧），为了防止端口与nginx冲突，我们修改为8000端口。</p><p>2、限制IP访问</p><p>配置文件位置&#x2F;etc&#x2F;nginx&#x2F;nginx.conf</p><p>替换配置文件中的http部分如下</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">  include /etc/nginx/conf.d/*.conf;</span><br><span class="line">  # 限制IP访问</span><br><span class="line">  server &#123;</span><br><span class="line">    listen 80 default;</span><br><span class="line">    server_name _;</span><br><span class="line">    return 403;</span><br><span class="line">    &#125;</span><br><span class="line">  server &#123;</span><br><span class="line">          listen       80;</span><br><span class="line">          server_name  www.test.com;</span><br><span class="line">    location / &#123;</span><br><span class="line">              #反向代理  </span><br><span class="line">              proxy_pass http://192.168.178.143:8000;</span><br><span class="line">              index  index.html index.htm index.jsp;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>配置好访问结果如下</p><p><img src="/images/pasted-4.png" alt="upload successful"></p><p>然后我们修改本地hosts文件，添加一条本地解析</p><p><img src="/images/pasted-7.png" alt="upload successful"></p><p>然后使用<a href="http://www.test.com进行访问/">www.test.com进行访问</a></p><p><img src="/images/pasted-9.png" alt="upload successful"></p><p>即可访问到apache默认页面，假设某公司内部系统也错误配置，我们即可访问到该公司的内部系统。</p><p>3、脚本复现</p><p>下载脚本</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/fofapro/Hosts_scan</span><br></pre></td></tr></table></figure><p>把收集过来的域名和IP分别存入hosts.txt 和 ip.txt</p><p>然后运行脚本</p><p><img src="/images/pasted-10.png" alt="upload successful"></p><p>可以看到碰撞成功的结果</p><h1 id="0x06-参考文献"><a href="#0x06-参考文献" class="headerlink" title="0x06 参考文献"></a>0x06 参考文献</h1><blockquote><p><a href="http://r3start.net/wp-content/uploads/2019/08/2019080916135087.pdf">http://r3start.net/wp-content/uploads/2019/08/2019080916135087.pdf</a></p></blockquote>]]></content>
+      
+      
+      <categories>
+          
+          <category> Web安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 漏洞挖掘 </tag>
+            
+            <tag> Web安全 </tag>
+            
+            <tag> SRC </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CNVD原创证书获取姿势</title>
       <link href="/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/"/>
       <url>/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/</url>
@@ -73,6 +131,8 @@
       
       
         <tags>
+            
+            <tag> Web安全 </tag>
             
             <tag> Waf </tag>
             
