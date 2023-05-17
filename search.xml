@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>一处知乎正常的业务逻辑</title>
+      <link href="/2023/05/17/%E4%B8%80%E5%A4%84%E7%9F%A5%E4%B9%8E%E6%AD%A3%E5%B8%B8%E7%9A%84%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91/"/>
+      <url>/2023/05/17/%E4%B8%80%E5%A4%84%E7%9F%A5%E4%B9%8E%E6%AD%A3%E5%B8%B8%E7%9A%84%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91/</url>
+      
+        <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在总结一些自己学习到或自己遇到的逻辑漏洞案例，发现这个逻辑也是在写URL跳转想着去截图让文章更容易理解一点，所以跑去知乎截了个图，结果有了下面的东西，不是漏洞，只是正常业务逻辑。</p><p><img src="/images/pasted-22.png" alt="upload successful"></p><h1 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h1><p>正常URL跳转应该是这样的</p><p><img src="/images/pasted-24.png" alt="upload successful"></p><p>以前在知乎写文章跳转的链接也都是存在提示的，但是当天写我好巧不巧用了个百度的测试，结果直接跳转百度</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://link.zhihu.com/?target=https://www.baidu.com</span><br></pre></td></tr></table></figure><p><img src="/images/pasted-26.png" alt="upload successful"></p><p>可想而知百度在知乎的跳转白名单内，但是百度能跳转到其他网站的方式可太多了，我们能不能利用知乎跳转到百度的跳转地址上呢？以下只展示一种方式</p><h1 id="漏洞？"><a href="#漏洞？" class="headerlink" title="漏洞？"></a>漏洞？</h1><p>首先我利用百度搜索csdn</p><p><img src="/images/pasted-30.png" alt="upload successful"></p><p>复制这个csdn的跳转链接</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.baidu.com/link?url=L1LdfTWmGl5f1P9nfgItTxjb6pJfiFl-OXHB5qYHdHm&amp;wd=&amp;eqid=8b9794310001febe0000000664635036</span><br></pre></td></tr></table></figure><p>然后让知乎跳转到这个百度链接</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://link.zhihu.com/?target=https://www.baidu.com/link?url=L1LdfTWmGl5f1P9nfgItTxjb6pJfiFl-OXHB5qYHdHm&amp;wd=&amp;eqid=8b9794310001febe0000000664635036</span><br></pre></td></tr></table></figure><p>发现直接通过知乎跳转到csdn</p><p><img src="/images/pasted-31.png" alt="upload successful"></p><p>利用这种方式进行跳转唯一条件是让百度收录该网站即可，让百度收录一些网站太容易了，且还有很多其他百度能进行跳转的地方且不需要让百度收录。当然这是一个正常的业务逻辑，也没有必要再去耗费时间。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Web安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 漏洞挖掘 </tag>
+            
+            <tag> Web安全 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CommonCollections6反序列化链分析</title>
       <link href="/2023/05/16/CommonCollections6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/"/>
       <url>/2023/05/16/CommonCollections6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/</url>
