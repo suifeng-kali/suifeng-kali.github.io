@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>小程序反编译实战</title>
+      <link href="/2023/05/30/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%8F%8D%E7%BC%96%E8%AF%91%E5%AE%9E%E6%88%98/"/>
+      <url>/2023/05/30/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%8F%8D%E7%BC%96%E8%AF%91%E5%AE%9E%E6%88%98/</url>
+      
+        <content type="html"><![CDATA[<p>在平常小程序测试当中，我们可以把小程序进行反编译查看小程序内部API接口进行一个详细的测试</p><h1 id="环境依赖"><a href="#环境依赖" class="headerlink" title="环境依赖"></a>环境依赖</h1><p>安装nodejs</p><p>安装WxAppUnpacker，然后执行npm install安装依赖</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">链接：https:<span class="comment">//pan.baidu.com/s/1Vos95RvtcOauqQB12yS8nA?pwd=1ea6 </span></span><br><span class="line">提取码：1ea6 </span><br></pre></td></tr></table></figure><p><img src="/assets/image-20230527143812-8pc0feu.png" alt="image.png"></p><h1 id="手机提取小程序数据包"><a href="#手机提取小程序数据包" class="headerlink" title="手机提取小程序数据包"></a>手机提取小程序数据包</h1><p>提取小程序数据包可以使用手机或借助模拟器进行提取，这里演示模拟器的提取方式，真实手机提取方式类似</p><p>首先进行一个小程序，让微信把小程序的包加载过来（尽可能在小程序里面把所有功能点击全，这样会把所有分包尽可能的加载到）</p><p><img src="/assets/image-20230527155128-6e4cygl.png" alt="image.png"></p><p>加载完成后在如下目录会存在两个md5形式的文件夹</p><blockquote><p>data–&gt;data–&gt;com.tencent.mm–&gt;MicroMsg</p></blockquote><p><img src="/assets/image-20230527145245-mt35jqz.png" alt="image.png"></p><p>其中一个是微信运行固定的md5文件夹，其不用理会</p><p><img src="/assets/image-20230527145318-xtfkspi.png" alt="image.png"></p><p>另外一个就是小程序运行加载过来的包，然后进行如下目录</p><blockquote><p>appbrand–&gt;pkg</p></blockquote><p><img src="/assets/image-20230527155231-mxvtrlt.png" alt="image.png"></p><p>其中里较大的一个数据包是微信小程序内置的sdk，这个包也不用理会，我们只需要把其他三个包复制出来，把这三个文件复制到模拟器的共享文件夹下</p><p><img src="/assets/image-20230527155507-v4g7oyz.png" alt="image.png"></p><p>然后在电脑上复制到WxAppUnpacker目录下</p><p><img src="/assets/image-20230527202520-sy4wlc9.png" alt="image.png"></p><p>一般最大的一个包为主包</p><h1 id="PC提取小程序数据包"><a href="#PC提取小程序数据包" class="headerlink" title="PC提取小程序数据包"></a>PC提取小程序数据包</h1><p>利用手机或模拟器需要把小程序数据包进行来回移动，比较繁琐，我们还可以直接借助PC端微信加载小程序然后把小程序数据包给提取出来。</p><p>首先在PC端登陆微信，在PC端加载小程序</p><p><img src="/assets/image-20230527204402-psmso06.png" alt="image.png"></p><p>然后在微信文件目录下</p><p><img src="/assets/image-20230527204517-d9v7lkh.png" alt="image.png"></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D:\data\WeChat Files\WeChat Files\Applet</span><br></pre></td></tr></table></figure><p>去找到加载到的小程序</p><p><img src="/assets/image-20230527204650-4gcsk28.png" alt="image.png"></p><p>点击进行，可以很清楚的看见谁是主包</p><p><img src="/assets/image-20230527204738-n4oc24y.png" alt="image.png"></p><p>由于PC加载的小程序包有加密，所以我们需要借助如下一款工具进行对数据包进行解密。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">链接：https:<span class="comment">//pan.baidu.com/s/1Vos95RvtcOauqQB12yS8nA?pwd=1ea6 </span></span><br><span class="line">提取码：1ea6 </span><br></pre></td></tr></table></figure><p>直接选择要解密的包就ok</p><p><img src="/assets/image-20230527204831-d9wj3sk.png" alt="image.png"></p><p>然后把每个分包依次解密即可（记得解密分包之前把之前解密的包进行重命名一下，因为该工具所解密后的文件名一致，不重命名会把之前解密的文件覆盖掉）</p><h1 id="小程序反编译"><a href="#小程序反编译" class="headerlink" title="小程序反编译"></a>小程序反编译</h1><p>反编译小程序我们需要使用到WxAppUnpacker这款工具</p><p>用如下命令</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm wuWxapkg.js 小程序主包所在位置</span><br></pre></td></tr></table></figure><p><img src="/assets/image-20230527205824-ehcn4oi.png" alt="image.png"></p><p>然后用如下命令把分别进行反编译</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node wuWxapkg.js -s=主包反编译后的目录 小程序分包所在位置</span><br></pre></td></tr></table></figure><p><img src="/assets/image-20230527210119-4wvnbe5.png" alt="image.png"></p><p>依次利用如上命令把分包依次进行反编译即可</p><p>当然我们还可以利用封装WxAppUnpacker图形化工具直接拖进去反编译，免去敲命令的操作</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">链接：https:<span class="comment">//pan.baidu.com/s/1Vos95RvtcOauqQB12yS8nA?pwd=1ea6 </span></span><br><span class="line">提取码：1ea6 </span><br></pre></td></tr></table></figure><p><img src="/assets/image-20230527210545-tpdyj0j.png" alt="image.png"></p><p>反编译之后，我们可以利用微信开发者工具或者一些其他的编译器软件对反编译之后所暴露出的路由接口进行测试了</p><p><img src="/assets/image-20230530152940-rghnhne.png" alt="image.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 移动安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 移动安全 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>逻辑漏洞中一些关于验证码的漏洞挖掘总结</title>
       <link href="/2023/05/26/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%85%B3%E4%BA%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%80%BB%E7%BB%93/"/>
       <url>/2023/05/26/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%85%B3%E4%BA%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%80%BB%E7%BB%93/</url>
