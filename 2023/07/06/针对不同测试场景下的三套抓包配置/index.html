@@ -1,0 +1,300 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>针对不同测试场景下的三套抓包配置 | 随风</title><meta name="author" content="随风"><meta name="copyright" content="随风"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="对于不同的测试场景，如Web、小程序、App等，我们往往会使用不同的抓包方案来完成我们测试，以下便是笔者本人在不同场景下使用的三套抓包方案。 WebWeb场景也是我们平常最多的抓包场景，而我们利用Burpsuite无法直接抓取到HTTPS的流量，想要抓到HTTPS流量需要进行如下配置。 配置Burpsuite代理  在浏览器配置代理  访问如下地址进行下载证书 1http:&#x2F;&#x2F;burp&#x2F;   进入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="针对不同测试场景下的三套抓包配置">
+<meta property="og:url" content="http://suifeng-kali.github.io/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="随风">
+<meta property="og:description" content="对于不同的测试场景，如Web、小程序、App等，我们往往会使用不同的抓包方案来完成我们测试，以下便是笔者本人在不同场景下使用的三套抓包方案。 WebWeb场景也是我们平常最多的抓包场景，而我们利用Burpsuite无法直接抓取到HTTPS的流量，想要抓到HTTPS流量需要进行如下配置。 配置Burpsuite代理  在浏览器配置代理  访问如下地址进行下载证书 1http:&#x2F;&#x2F;burp&#x2F;   进入">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://suifeng-kali.github.io/assets/image-20230705150444-ke8yj3w.png">
+<meta property="article:published_time" content="2023-07-06T00:15:00.000Z">
+<meta property="article:modified_time" content="2023-07-06T00:19:30.376Z">
+<meta property="article:author" content="随风">
+<meta property="article:tag" content="Web安全">
+<meta property="article:tag" content="Burpsuite">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://suifeng-kali.github.io/assets/image-20230705150444-ke8yj3w.png"><link rel="shortcut icon" href="https://suifeng-kali.github.io/img/logo.jpg"><link rel="canonical" href="http://suifeng-kali.github.io/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":380},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 随风","link":"链接: ","source":"来源: 随风","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '针对不同测试场景下的三套抓包配置',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-06 08:19:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/assets/image-20230705150444-ke8yj3w.png')"><nav id="nav"><span id="blog-info"><a href="/" title="随风"><span class="site-name">随风</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">针对不同测试场景下的三套抓包配置</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-06T00:15:00.000Z" title="发表于 2023-07-06 08:15:00">2023-07-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-07-06T00:19:30.376Z" title="更新于 2023-07-06 08:19:30">2023-07-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Web%E5%AE%89%E5%85%A8/">Web安全</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="针对不同测试场景下的三套抓包配置"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>对于不同的测试场景，如Web、小程序、App等，我们往往会使用不同的抓包方案来完成我们测试，以下便是笔者本人在不同场景下使用的三套抓包方案。</p>
+<h1 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h1><p>Web场景也是我们平常最多的抓包场景，而我们利用Burpsuite无法直接抓取到HTTPS的流量，想要抓到HTTPS流量需要进行如下配置。</p>
+<p>配置Burpsuite代理</p>
+<p><img src="/assets/image-20230526205915-cl26t35.png" alt="image.png"></p>
+<p>在浏览器配置代理</p>
+<p><img src="/assets/image-20230526210015-jfegnuk.png" alt="image.png"></p>
+<p>访问如下地址进行下载证书</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//burp/</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/image-20230526210108-1oi6g84.png" alt="image.png"></p>
+<p>进入到谷歌浏览器–&gt;设置–&gt;隐私和安全–&gt;管理设备证书</p>
+<p><img src="/assets/image-20230526210257-6xwey0g.png" alt="image.png"></p>
+<p>在受信任的根证书颁发机构导入刚才下载好的证书即可</p>
+<p><img src="/assets/image-20230526210751-b65wyjx.png" alt="image.png"></p>
+<p>成功导入后可以找到我们的证书</p>
+<p><img src="/assets/image-20230526210900-cjs7c0i.png" alt="image.png"></p>
+<p>且可正常抓取HTTPS的流量</p>
+<p><img src="/assets/image-20230526211656-mo6yxzm.png" alt="image.png"></p>
+<h1 id="小程序"><a href="#小程序" class="headerlink" title="小程序"></a>小程序</h1><p>小程序我们无法直接通过浏览器进行访问，所以我们抓取手机（模拟器）的流量来对小程序进行抓包，这里借助夜神模拟器来进行演示。</p>
+<p>由于微信的更新，太高版本的微信可能抓不到https的数据包</p>
+<blockquote>
+<p>安卓系统 7.0 以下版本，不管微信任意版本，都会信任系统提供的证书<br>安卓系统 7.0 以上版本，微信 7.0 以下版本，微信会信任系统提供的证书<br>安卓系统 7.0 以上版本，微信 7.0 以上版本，微信只信任它自己配置的证书列表</p>
+</blockquote>
+<p>我这里的模拟器是在安卓7.0以下，所以支持任何版本的微信</p>
+<p>首先配置buspsuite的代理</p>
+<p><img src="/assets/image-20230705092534-znbbp32.png" alt="image.png"></p>
+<p>然后来到模拟器中，点击设置，点击WLAN</p>
+<p><img src="/assets/image-20230705092716-0wli4fu.png" alt="image.png"></p>
+<p>之后长按出现如下之后，点击修改网络</p>
+<p><img src="/assets/image-20230705092801-nobvdkn.png" alt="image.png"></p>
+<p>点击高级选项进行手动配置代理</p>
+<p><img src="/assets/image-20230705092836-ahk3cq0.png" alt="image.png"></p>
+<p>然后把之前在burpsuite设置的ip和端口进行填写即可</p>
+<p><img src="/assets/image-20230705093059-y42xy9w.png" alt="image.png"></p>
+<p>接下来在模拟器中的浏览器里访问配置的代理地址和端口进行证书的下载</p>
+<p><img src="/assets/image-20230705093314-4zh6hro.png" alt="image.png"></p>
+<p>下载之后将下载的cacert.der文件修改为cacert.cer，再打开设置–&gt;安全</p>
+<p><img src="/assets/image-20230705112444-9mtvrdd.png" alt="image.png"></p>
+<p>选择从SD卡安装</p>
+<p><img src="/assets/image-20230705112515-2tk6mhq.png" alt="image.png"></p>
+<p>选择证书安装即可</p>
+<p><img src="/assets/image-20230705112547-kcdpppy.png" alt="image.png"></p>
+<p>安装成功后可在信任的凭据查看已安装的证书</p>
+<p><img src="/assets/image-20230705112623-ntclchr.png" alt="image.png"></p>
+<p><img src="/assets/image-20230705112704-lw4frbk.png" alt="image.png"></p>
+<p>证书成功安装后就去测试抓包，打开微信，打开一个小程序</p>
+<p><img src="/assets/image-20230705113432-9sib6ox.png" alt="image.png"></p>
+<p>可成功抓取到数据包</p>
+<h1 id="App"><a href="#App" class="headerlink" title="App"></a>App</h1><p>其实也能用抓小程序的抓包方案也能抓取App的数据包，但是App有时会限制模拟器打开，用真实手机抓包然后转发到Burpsuite上能帮我们解决掉许多不必要的麻烦。</p>
+<p>这里我使用的抓取App数据包的方案是</p>
+<blockquote>
+<p>手机+Postern+Charles+Burpsuite</p>
+</blockquote>
+<h2 id="Charles配置"><a href="#Charles配置" class="headerlink" title="Charles配置"></a>Charles配置</h2><p>Charles 是一款常用的网络抓包工具，通过将自己设置成系统的网络访问代理服务器，用于调试与服务器端的网络通讯协议，除了常见的http协议的抓包，Charles 还可以分析 Https 协议。</p>
+<p>其<strong>下载地址</strong>如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//www.charlesproxy.com/latest-release/download.do</span></span><br></pre></td></tr></table></figure>
+
+<p>Charles下载后只有30天免费使用权限，试用期过后，未付费的用户仍然可以继续使用过，但每次使用时间不能超过 30 分钟。</p>
+<p>这里不演示具体破解方法了，网上有很多该软件破解教程，可以自行研究一下。</p>
+<p>安装好之后，打开软件如下</p>
+<p><img src="/assets/image-20230705150312-on6sipv.png" alt="image.png"></p>
+<p>我们首先要给安卓手机导入Charles的系统证书，在Help–&gt;SSL Proxying下</p>
+<p><img src="/assets/image-20230705150444-ke8yj3w.png" alt="image.png"></p>
+<p>把保存的pem后缀文件修改成后缀为cer，后面安装证书方法和小程序中类似或直接点击证书文件即可</p>
+<p><img src="/assets/image-20230705152752-xyn32tt.png" alt="image.png"></p>
+<p>填写证书名称后点击确定即可安装成功</p>
+<p><img src="/assets/image-20230705152951-fxgifit.png" alt="image.png"></p>
+<p>因为后续需要把数据包转发到burpsuite，便于数据包在burpsuite上的更改，所以我们的burpsuite还需要导入charles的证书，在Help–&gt;SSL Proxying下</p>
+<p><img src="/assets/image-20230705154330-zzu3q0f.png" alt="image.png"></p>
+<p>然后输入一个你设置的密码</p>
+<p><img src="/assets/image-20230705154421-nsospu0.png" alt="image.png"></p>
+<p>保存为p12文件，打开burpsuite，把该文件进行导入</p>
+<p><img src="/assets/image-20230705154754-2jdl42z.png" alt="image.png"></p>
+<p>选择文件，添加密码即可</p>
+<p><img src="/assets/image-20230705154855-x3utv32.png" alt="image.png"></p>
+<p>证书都准备完成之后，就需要对charles做一些代理配置，在Proxy–&gt;Proxy Settings</p>
+<p><img src="/assets/image-20230705155225-9zw60jq.png" alt="image.png"></p>
+<p>这里分别配置一个HTTP代理和一个SOCKS代理</p>
+<p><img src="/assets/image-20230705155522-sb5cy2s.png" alt="image.png"></p>
+<p>然后在proxy-&gt;ssl proxy settings</p>
+<p><img src="/assets/image-20230705155616-vcnck8e.png" alt="image.png"></p>
+<p>配置两个*号，让其匹配所有Host和Port</p>
+<p><img src="/assets/image-20230705155722-fzos3gb.png" alt="image.png"></p>
+<p>配置完成后依次点击ok即可</p>
+<h2 id="Postern配置"><a href="#Postern配置" class="headerlink" title="Postern配置"></a>Postern配置</h2><p>Postern 是一款 Android 平台上的代理工具，可以帮助用户实现全局代理、分应用代理等多种代理方式。</p>
+<p><strong>下载地址</strong>如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">链接：https:<span class="comment">//pan.baidu.com/s/11MOwX2c2brWOeSx2-eyzxw?pwd=9ke9 </span></span><br><span class="line">提取码：9ke9 </span><br></pre></td></tr></table></figure>
+
+<p>直接在需要抓包的手机上选中文件里的apk文件进行安装即可</p>
+<p>安装成功后先在Postern配置SOCKS代理</p>
+<p><img src="/assets/image-20230705160500-91tyrio.png" alt="image.png"></p>
+<p>这里的地址和端口都要和之前配置的SOCKS地址和端口一致</p>
+<p><img src="/assets/image-20230705160701-du9fmsu.png" alt="image.png"></p>
+<p>然后进行匹配规则的配置</p>
+<p><img src="/assets/image-20230705160937-1yr59hc.png" alt="image.png"></p>
+<p>清空之后配置如下规则</p>
+<p><img src="/assets/image-20230705161015-eydlrid.png" alt="image.png"></p>
+<p>然后打开VPN</p>
+<p><img src="/assets/image-20230705161211-wba6nz1.png" alt="image.png"></p>
+<p>配置一切正常之后会有弹出如下对话框，点击allow允许即可</p>
+<p><img src="/assets/image-20230705161148-ojm0r6j.png" alt="image.png"></p>
+<p>之后在手机上打开App就可抓到数据包了</p>
+<p><img src="/assets/image-20230705161332-zctz83k.png" alt="image.png"></p>
+<h2 id="转发burpsuite"><a href="#转发burpsuite" class="headerlink" title="转发burpsuite"></a>转发burpsuite</h2><p>抓取到数据包之后，我们可以把数据包转发到burpsuite上进行测试，在proxy–&gt;external proxy settings</p>
+<p><img src="/assets/image-20230705161529-llwm2a9.png" alt="image.png"></p>
+<p>配置好buspsuite监听的端口即可</p>
+<p><img src="/assets/image-20230705161759-jurq74p.png" alt="image.png"></p>
+<p><img src="/assets/image-20230705161818-bwf316j.png" alt="image.png"></p>
+<p>配置完成后可在bp上成功接受到数据包</p>
+<p><img src="/assets/image-20230705164151-g7gas7p.png" alt="image.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io">随风</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/">http://suifeng-kali.github.io/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://suifeng-kali.github.io" target="_blank">随风</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Web%E5%AE%89%E5%85%A8/">Web安全</a><a class="post-meta__tags" href="/tags/Burpsuite/">Burpsuite</a></div><div class="post_share"><div class="social-share" data-image="/assets/image-20230705150444-ke8yj3w.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/05/30/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%8F%8D%E7%BC%96%E8%AF%91%E5%AE%9E%E6%88%98/" title="小程序反编译实战"><img class="cover" src="/assets/image-20230527204402-psmso06.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">小程序反编译实战</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/04/30/CNVD%E5%8E%9F%E5%88%9B%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96%E5%A7%BF%E5%8A%BF/" title="CNVD原创证书获取姿势"><img class="cover" src="/images/pasted-2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-30</div><div class="title">CNVD原创证书获取姿势</div></div></a></div><div><a href="/2023/04/30/SRC%E7%AA%81%E7%A0%B4%E8%BE%B9%E7%95%8C%E5%AF%BB%E6%89%BE%E9%9A%90%E5%8C%BF%E8%B5%84%E4%BA%A7%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%88HOSTS%E7%A2%B0%E6%92%9E%EF%BC%89/" title="SRC突破边界寻找隐匿资产小技巧（HOSTS碰撞）"><img class="cover" src="/images/pasted-1.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-30</div><div class="title">SRC突破边界寻找隐匿资产小技巧（HOSTS碰撞）</div></div></a></div><div><a href="/2023/05/17/%E4%B8%80%E5%A4%84%E7%9F%A5%E4%B9%8E%E6%AD%A3%E5%B8%B8%E7%9A%84%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91/" title="一处知乎正常的业务逻辑"><img class="cover" src="/images/pasted-24.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-17</div><div class="title">一处知乎正常的业务逻辑</div></div></a></div><div><a href="/2023/05/01/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%A6%82%E4%BD%95%E6%89%93%E9%80%A0%E7%A4%BE%E5%B7%A5%E5%AD%97%E5%85%B8/" title="渗透测试如何打造社工字典"><img class="cover" src="/images/pasted-14.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-01</div><div class="title">渗透测试如何打造社工字典</div></div></a></div><div><a href="/2023/04/29/%E7%BD%91%E7%AB%99%E5%AE%89%E5%85%A8%E7%8B%97APACHE%E7%89%88V4-0%E7%BB%95%E8%BF%87/" title="网站安全狗APACHE版V4.0绕过"><img class="cover" src="/assets/image-20220210101102-k2p13gt.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-29</div><div class="title">网站安全狗APACHE版V4.0绕过</div></div></a></div><div><a href="/2023/05/26/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%85%B3%E4%BA%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%80%BB%E7%BB%93/" title="逻辑漏洞中一些关于验证码的漏洞挖掘总结"><img class="cover" src="/assets/image-20230517151119-rt2puj0.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-26</div><div class="title">逻辑漏洞中一些关于验证码的漏洞挖掘总结</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">随风</div><div class="author-info__description">记录与分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" href="/img/gzh.png"><i class="fa-brands fa-weixin"></i><span>关注我</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/suifeng-kali" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/img/vx.jpg" target="_blank" title="VX"><i class="fa-brands fa-weixin" style="color: #1BCB53;"></i></a><a class="social-icon" href="https://space.bilibili.com/266524390?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili" style="color: #F75887;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">在这分享分享自己的笔记，记录记录生活。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Web"><span class="toc-number">1.</span> <span class="toc-text">Web</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B0%8F%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.</span> <span class="toc-text">小程序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#App"><span class="toc-number">3.</span> <span class="toc-text">App</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Charles%E9%85%8D%E7%BD%AE"><span class="toc-number">3.1.</span> <span class="toc-text">Charles配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Postern%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text">Postern配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AC%E5%8F%91burpsuite"><span class="toc-number">3.3.</span> <span class="toc-text">转发burpsuite</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/" title="针对不同测试场景下的三套抓包配置"><img src="/assets/image-20230705150444-ke8yj3w.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="针对不同测试场景下的三套抓包配置"/></a><div class="content"><a class="title" href="/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/" title="针对不同测试场景下的三套抓包配置">针对不同测试场景下的三套抓包配置</a><time datetime="2023-07-06T00:15:00.000Z" title="发表于 2023-07-06 08:15:00">2023-07-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/30/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%8F%8D%E7%BC%96%E8%AF%91%E5%AE%9E%E6%88%98/" title="小程序反编译实战"><img src="/assets/image-20230527204402-psmso06.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="小程序反编译实战"/></a><div class="content"><a class="title" href="/2023/05/30/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%8F%8D%E7%BC%96%E8%AF%91%E5%AE%9E%E6%88%98/" title="小程序反编译实战">小程序反编译实战</a><time datetime="2023-05-30T07:48:00.000Z" title="发表于 2023-05-30 15:48:00">2023-05-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/26/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%85%B3%E4%BA%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%80%BB%E7%BB%93/" title="逻辑漏洞中一些关于验证码的漏洞挖掘总结"><img src="/assets/image-20230517151119-rt2puj0.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="逻辑漏洞中一些关于验证码的漏洞挖掘总结"/></a><div class="content"><a class="title" href="/2023/05/26/%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%85%B3%E4%BA%8E%E9%AA%8C%E8%AF%81%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E6%80%BB%E7%BB%93/" title="逻辑漏洞中一些关于验证码的漏洞挖掘总结">逻辑漏洞中一些关于验证码的漏洞挖掘总结</a><time datetime="2023-05-26T12:30:00.000Z" title="发表于 2023-05-26 20:30:00">2023-05-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/17/%E4%B8%80%E5%A4%84%E7%9F%A5%E4%B9%8E%E6%AD%A3%E5%B8%B8%E7%9A%84%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91/" title="一处知乎正常的业务逻辑"><img src="/images/pasted-24.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="一处知乎正常的业务逻辑"/></a><div class="content"><a class="title" href="/2023/05/17/%E4%B8%80%E5%A4%84%E7%9F%A5%E4%B9%8E%E6%AD%A3%E5%B8%B8%E7%9A%84%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91/" title="一处知乎正常的业务逻辑">一处知乎正常的业务逻辑</a><time datetime="2023-05-17T09:55:00.000Z" title="发表于 2023-05-17 17:55:00">2023-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/16/CommonCollections6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="CommonCollections6反序列化链分析"><img src="/assets/image-20230512113623-1weayz9.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CommonCollections6反序列化链分析"/></a><div class="content"><a class="title" href="/2023/05/16/CommonCollections6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E5%88%86%E6%9E%90/" title="CommonCollections6反序列化链分析">CommonCollections6反序列化链分析</a><time datetime="2023-05-16T11:42:00.000Z" title="发表于 2023-05-16 19:42:00">2023-05-16</time></div></div></div></div></div></div></main><footer id="footer" style="background: black"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 随风</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'SB4PGikNZrP3JAMCBJNWM9eC-gzGzoHsz',
+      appKey: 'DIgUpJL30T7a2KTMRAWkD2Zq',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,YOU,RedTeam,POC,EXP,Payload,SQLi,XSS,CSRF,XXE,Hack,Security,Sqlmap,Nmap,BurpSuite,Java,Python,Web,RCE,Root,Id,Whoami,CobaltStrike,Metasploit" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
