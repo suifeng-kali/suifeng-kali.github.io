@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>渗透攻防之前端JS加密该如何破局</title>
+      <link href="/2023/12/18/%E6%B8%97%E9%80%8F%E6%94%BB%E9%98%B2%E4%B9%8B%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E8%AF%A5%E5%A6%82%E4%BD%95%E7%A0%B4%E5%B1%80/"/>
+      <url>/2023/12/18/%E6%B8%97%E9%80%8F%E6%94%BB%E9%98%B2%E4%B9%8B%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E8%AF%A5%E5%A6%82%E4%BD%95%E7%A0%B4%E5%B1%80/</url>
+      
+        <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>渗透测试过程中最常见的一种场景就是登录框，而在登录框上最头疼的就是登录框参数字段的值被进行了加密，我们无法进行下一步的FUZZ OR Intruder，导致很多时候错过很多漏洞。那么碰到这种情况该怎么办呢？</p><h1 id="破局"><a href="#破局" class="headerlink" title="破局"></a>破局</h1><p>在参数被进行加密的情况下可以对其进行解密或者来模拟其JS加密方式，这涉及到JS逆向。而在JS逆向中，常常用到的两种方法就是JS扣取和补全JS环境，但是在我们渗透测试的过程中，我们常常采用的方法就是JS扣取，假如需要用到补全JS环境去进行JS逆向，个人感觉性价比就比较低了，因为就算我们花大量的时间去补全了环境能够进行解密，其系统也不一定存在漏洞。所以这里主要介绍一下JS扣取，早期JS扣取我是直接把JS代码扣取出来利用一些脚本语言去模拟他的加密算法，后面我常用的就是一款BP插件，可以简化如上步骤。</p><p><strong>项目地址如下</strong></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//github.com/c0ny1/jsEncrypter</span></span><br></pre></td></tr></table></figure><h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>下载插件，进行编译</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn <span class="keyword">package</span></span><br></pre></td></tr></table></figure><p>也可以用Releases里面项目作者编译好的</p><p>编译好把target里的jar文件添加进去</p><p><img src="/assets/image-20231218095826-pco6utd.png" alt="image.png"></p><p><img src="/assets/image-20231218100014-83rkim4.png" alt="image.png"></p><p>添加好就可以在BP里面看到如下界面</p><p><img src="/assets/image-20231218100143-dtb3ivw.png" alt="image.png"></p><p>然后该项目里面还提供了一个test文件夹</p><p><img src="/assets/image-20231218100329-f6vwcmw.png" alt="image.png"></p><p>test文件夹里面存放的是一个PHP版本的测试靶机，我们可以利用靶机试试该插件的有效性</p><p>首先把test文件夹下的webapp测试代码搭建起来（可以直接使用PhpStudy，把webapp直接放在PhpStudy的Web目录即可），搭建完成如下</p><p><img src="/assets/image-20231218100906-1qk492l.png" alt="image.png"></p><p>靶机提供了7个算法对密码进行加密后传输</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">base64</span><br><span class="line">md5</span><br><span class="line">sha1</span><br><span class="line">sha254</span><br><span class="line">sha384</span><br><span class="line">sha512</span><br><span class="line">RSA</span><br></pre></td></tr></table></figure><p>这里我们选一个RSA来进行测试，抓包发现password字段被加密</p><p><img src="/assets/image-20231218102746-7ymd4c8.png" alt="image.png"></p><p>可以在源代码中看到加密逻辑如下</p><p><img src="/assets/image-20231218101452-cb36qus.png" alt="image.png"></p><p>引用了js&#x2F;jsencrypt.js文件，但是这里还缺少了一个PublicKey，一般在JS攻防之中，PublicKey常常会被混淆处理，靶机是为了测试用，所以PublicKey被直接写在了源代码之中（其实实际开发中，也有很多PublicKey是没做混淆的）</p><p><img src="/assets/image-20231218102229-yhbsfy0.png" alt="image.png"></p><p>那我们来模拟它的加密环境，首先下载一个phantomjs，安装之后添加到环境变量</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//phantomjs.org/download.html</span></span><br></pre></td></tr></table></figure><p><img src="/assets/image-20231218103546-rqv89x9.png" alt="image.png"></p><p>然后把加密逻辑添加进phantomjs_server.js文件里面</p><p><img src="/assets/image-20231218104343-nkf4vyk.png" alt="image.png"></p><p><img src="/assets/image-20231218104304-orlz36u.png" alt="image.png"></p><p>然后把靶机中jsencrypt.js代码复制出来，我这里重命名为了rsa.js（注意假如，加密引用了多个文件，LoadScript里面的引用顺序也要和浏览器的顺序一致）</p><p><img src="/assets/image-20231218104817-dxru8e2.png" alt="image.png"></p><p>然后启动server</p><p><img src="/assets/image-20231218105028-nui5zvg.png" alt="image.png"></p><p>回到BP里面进行连接测试，如下服务器启动成功</p><p><img src="/assets/image-20231218105144-jhahgcf.png" alt="image.png"></p><p><img src="/assets/image-20231218105341-eqj3jk3.png" alt="image.png"></p><p>加密正常后，我们就可以正常加载我们自己的测试字典，然后走我们的插件进行模拟加密就ok</p><p><img src="/assets/image-20231218105823-q7yc7ie.png" alt="image.png"></p><p><img src="/assets/image-20231218105839-kjkaex4.png" alt="image.png"></p><p><img src="/assets/image-20231218105924-1hd5m34.png" alt="image.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Web安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Web安全 </tag>
+            
+            <tag> 渗透测试 </tag>
+            
+            <tag> JS逆向 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>针对不同测试场景下的三套抓包配置</title>
       <link href="/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/"/>
       <url>/2023/07/06/%E9%92%88%E5%AF%B9%E4%B8%8D%E5%90%8C%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E4%B8%89%E5%A5%97%E6%8A%93%E5%8C%85%E9%85%8D%E7%BD%AE/</url>
