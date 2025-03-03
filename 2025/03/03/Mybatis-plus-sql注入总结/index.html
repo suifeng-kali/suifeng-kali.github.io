@@ -1,0 +1,317 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Mybatis-plus sql注入总结 | 随风</title><meta name="author" content="随风"><meta name="copyright" content="随风"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="MyBatis-Plus 是一个 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。 SpringBoot整合Mybatis-plus配置文件 12345678910111213141516spring.application.name&#x3D;springboot-mybatisplus-testspring.datasource.url&#x3D;jdbc:my">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mybatis-plus sql注入总结">
+<meta property="og:url" content="http://suifeng-kali.github.io/2025/03/03/Mybatis-plus-sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="随风">
+<meta property="og:description" content="MyBatis-Plus 是一个 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。 SpringBoot整合Mybatis-plus配置文件 12345678910111213141516spring.application.name&#x3D;springboot-mybatisplus-testspring.datasource.url&#x3D;jdbc:my">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://suifeng-kali.github.io/assets/image-20250303104718-dt6wb20.png">
+<meta property="article:published_time" content="2025-03-03T11:57:00.000Z">
+<meta property="article:modified_time" content="2025-03-03T12:04:34.330Z">
+<meta property="article:author" content="随风">
+<meta property="article:tag" content="代码审计">
+<meta property="article:tag" content="sql注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://suifeng-kali.github.io/assets/image-20250303104718-dt6wb20.png"><link rel="shortcut icon" href="https://suifeng-kali.github.io/img/logo.jpg"><link rel="canonical" href="http://suifeng-kali.github.io/2025/03/03/Mybatis-plus-sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":380},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 随风","link":"链接: ","source":"来源: 随风","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Mybatis-plus sql注入总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-03 20:04:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/assets/image-20250303104718-dt6wb20.png')"><nav id="nav"><span id="blog-info"><a href="/" title="随风"><span class="site-name">随风</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Mybatis-plus sql注入总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-03-03T11:57:00.000Z" title="发表于 2025-03-03 19:57:00">2025-03-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-03-03T12:04:34.330Z" title="更新于 2025-03-03 20:04:34">2025-03-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Mybatis-plus sql注入总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>MyBatis-Plus 是一个 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。</p>
+<h2 id="SpringBoot整合Mybatis-plus"><a href="#SpringBoot整合Mybatis-plus" class="headerlink" title="SpringBoot整合Mybatis-plus"></a>SpringBoot整合Mybatis-plus</h2><p><strong>配置文件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">spring.application.name=springboot-mybatisplus-test</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">spring.datasource.url=jdbc:mysql://localhost:3306/test?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false</span><br><span class="line">spring.datasource.username=root</span><br><span class="line">spring.datasource.password=root</span><br><span class="line">spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mybatis-plus:</span><br><span class="line">configuration:</span><br><span class="line">#mybatis-plus配置控制台打印完整带参数SQL语句</span><br><span class="line">mybatis-plus.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl</span><br><span class="line">map-underscore-to-camel-case: true</span><br></pre></td></tr></table></figure>
+
+<p><strong>添加相关pom依赖</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line">    &lt;parent&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;3.4.3&lt;/version&gt;</span><br><span class="line">        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;</span><br><span class="line">    &lt;/parent&gt;</span><br><span class="line">    &lt;groupId&gt;com.example&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springboot-mybatisplus-test&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</span><br><span class="line">    &lt;name&gt;springboot-mybatisplus-test&lt;/name&gt;</span><br><span class="line">    &lt;description&gt;springboot-mybatisplus-test&lt;/description&gt;</span><br><span class="line">    &lt;url/&gt;</span><br><span class="line">    &lt;licenses&gt;</span><br><span class="line">        &lt;license/&gt;</span><br><span class="line">    &lt;/licenses&gt;</span><br><span class="line">    &lt;developers&gt;</span><br><span class="line">        &lt;developer/&gt;</span><br><span class="line">    &lt;/developers&gt;</span><br><span class="line">    &lt;scm&gt;</span><br><span class="line">        &lt;connection/&gt;</span><br><span class="line">        &lt;developerConnection/&gt;</span><br><span class="line">        &lt;tag/&gt;</span><br><span class="line">        &lt;url/&gt;</span><br><span class="line">    &lt;/scm&gt;</span><br><span class="line">    &lt;properties&gt;</span><br><span class="line">        &lt;java.version&gt;17&lt;/java.version&gt;</span><br><span class="line">    &lt;/properties&gt;</span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;</span><br><span class="line">            &lt;scope&gt;test&lt;/scope&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;8.0.30&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;lombok&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;1.18.20&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;com.baomidou&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;mybatis-plus-spring-boot3-starter&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;3.5.10.1&lt;/version&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line"></span><br><span class="line">    &lt;build&gt;</span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">            &lt;/plugin&gt;</span><br><span class="line">        &lt;/plugins&gt;</span><br><span class="line">    &lt;/build&gt;</span><br><span class="line"></span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>MVC三层架构</strong></p>
+<p>准备实体类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package com.example.springbootmybatisplustest.Vo;</span><br><span class="line"></span><br><span class="line">import com.baomidou.mybatisplus.annotation.IdType;</span><br><span class="line">import com.baomidou.mybatisplus.annotation.TableId;</span><br><span class="line">import com.baomidou.mybatisplus.annotation.TableName;</span><br><span class="line">import lombok.Data;</span><br><span class="line"></span><br><span class="line">@Data</span><br><span class="line">@TableName(value = &quot;people&quot;)</span><br><span class="line">public class People &#123;</span><br><span class="line">    @TableId(value = &quot;id&quot;, type = IdType.AUTO)</span><br><span class="line">    private Integer id;</span><br><span class="line">    private String name;</span><br><span class="line">    private String age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建mapper</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">package com.example.springbootmybatisplustest.Mapper;</span><br><span class="line"></span><br><span class="line">import com.baomidou.mybatisplus.core.mapper.BaseMapper;</span><br><span class="line">import com.example.springbootmybatisplustest.Vo.People;</span><br><span class="line">import org.apache.ibatis.annotations.Mapper;</span><br><span class="line"></span><br><span class="line">@Mapper</span><br><span class="line">public interface PeopleMapper extends BaseMapper&lt;People&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建service</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.example.springbootmybatisplustest.Service;</span><br><span class="line"></span><br><span class="line">import com.baomidou.mybatisplus.extension.service.IService;</span><br><span class="line">import com.example.springbootmybatisplustest.Vo.People;</span><br><span class="line"></span><br><span class="line">public interface PeopleService extends IService&lt;People&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建serviceimpl（操作sql的语句会在impl处实现）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package com.example.springbootmybatisplustest.Service.Impl;</span><br><span class="line"></span><br><span class="line">import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;</span><br><span class="line">import com.example.springbootmybatisplustest.Mapper.PeopleMapper;</span><br><span class="line">import com.example.springbootmybatisplustest.Service.PeopleService;</span><br><span class="line">import com.example.springbootmybatisplustest.Vo.People;</span><br><span class="line">import org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line">@Service</span><br><span class="line">public class PeopleServiceImpl extends ServiceImpl&lt;PeopleMapper, People&gt; implements PeopleService &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建控制器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package com.example.springbootmybatisplustest.Controller;</span><br><span class="line"></span><br><span class="line">import com.example.springbootmybatisplustest.Service.PeopleService;</span><br><span class="line">import com.example.springbootmybatisplustest.Vo.People;</span><br><span class="line">import org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line">import org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line">import org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line">import org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line">import org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;/test&quot;)</span><br><span class="line">public class PeopleController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private PeopleService peopleService;</span><br><span class="line">    @GetMapping</span><br><span class="line">    public People aaa(@RequestParam(&quot;id&quot;) int id)&#123;</span><br><span class="line">        System.out.println(&quot;test&quot;);</span><br><span class="line">        return  peopleService.getById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250226105804-timbmrt.png" alt="image">​</p>
+<h3 id="Mybatis-plus的持久层使用"><a href="#Mybatis-plus的持久层使用" class="headerlink" title="Mybatis-plus的持久层使用"></a>Mybatis-plus的持久层使用</h3><p>我们的service继承了IService，mapper继承了BaseMapper</p>
+<p>​<img src="/assets/image-20250226111220-vxaq7yw.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250226111717-o34wcsu.png" alt="image">​</p>
+<p>IService 是 MyBatis-Plus 提供的一个通用 Service 层接口，它封装了常见的 CRUD 操作，包括插入、删除、查询和分页等。通过继承 IService 接口，可以快速实现对数据库的基本操作，同时保持代码的简洁性和可维护性。</p>
+<p>BaseMapper 是 Mybatis-Plus 提供的一个通用 Mapper 接口，它封装了一系列常用的数据库操作方法，包括增、删、改、查等。通过继承 BaseMapper，开发者可以快速地对数据库进行操作，而无需编写繁琐的 SQL 语句。</p>
+<p>具体封装函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://baomidou.com/guides/data-interface/#_top</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250226111348-76rdug9.png" alt="image">​</p>
+<p>‍</p>
+<h3 id="条件构造器"><a href="#条件构造器" class="headerlink" title="条件构造器"></a>条件构造器</h3><p>MyBatis-Plus 提供了一套强大的条件构造器（Wrapper），用于构建复杂的数据库查询条件。Wrapper 类允许开发者以链式调用的方式构造查询条件，无需编写繁琐的 SQL 语句，从而提高开发效率并减少 SQL 注入的风险。</p>
+<p>Mybatis-Plus提供Wrapper类去构造查询</p>
+<ul>
+<li><strong>AbstractWrapper</strong>：这是一个抽象基类，提供了所有 Wrapper 类共有的方法和属性。它定义了条件构造的基本逻辑，包括字段（column）、值（value）、操作符（condition）等。所有的 QueryWrapper、UpdateWrapper、LambdaQueryWrapper 和 LambdaUpdateWrapper 都继承自 AbstractWrapper。</li>
+<li><strong>QueryWrapper</strong>：专门用于构造查询条件，支持基本的等于、不等于、大于、小于等各种常见操作。它允许你以链式调用的方式添加多个查询条件，并且可以组合使用 <code>and</code>​ 和 <code>or</code>​ 逻辑。</li>
+<li><strong>UpdateWrapper</strong>：用于构造更新条件，可以在更新数据时指定条件。与 QueryWrapper 类似，它也支持链式调用和逻辑组合。使用 UpdateWrapper 可以在不创建实体对象的情况下，直接设置更新字段和条件。</li>
+<li><strong>LambdaQueryWrapper</strong>：这是一个基于 Lambda 表达式的查询条件构造器，它通过 Lambda 表达式来引用实体类的属性，从而避免了硬编码字段名。这种方式提高了代码的可读性和可维护性，尤其是在字段名可能发生变化的情况下。</li>
+<li><strong>LambdaUpdateWrapper</strong>：类似于 LambdaQueryWrapper，LambdaUpdateWrapper 是基于 Lambda 表达式的更新条件构造器。它允许你使用 Lambda 表达式来指定更新字段和条件，同样避免了硬编码字段名的问题。</li>
+</ul>
+<p>具体使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://baomidou.com/guides/wrapper/#_top</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250226114016-eksshl6.png" alt="image">​</p>
+<p>‍</p>
+<p>‍</p>
+<h2 id="SQL注入常出现位置"><a href="#SQL注入常出现位置" class="headerlink" title="SQL注入常出现位置"></a>SQL注入常出现位置</h2><p>Mybatis-plus封装了很多函数去操作sql语句，正确调用MyBatis-Plus封装的操作sql的函数可以很大程度避免sql注入问题，但是在一些分页处的order by和动态表名的地方需要程序员单独另外处理的地方很可能产生sql注入漏洞。</p>
+<h3 id="分页场景下的sql注入"><a href="#分页场景下的sql注入" class="headerlink" title="分页场景下的sql注入"></a>分页场景下的sql注入</h3><h4 id="PaginationInnerInterceptor"><a href="#PaginationInnerInterceptor" class="headerlink" title="PaginationInnerInterceptor"></a>PaginationInnerInterceptor</h4><p>PaginationInnerInterceptor 是 MyBatis-Plus 提供的一个分页插件，用于处理分页查询的拦截器</p>
+<p>PaginationInnerInterceptor 主要负责在 SQL 查询中自动添加分页条件，确保查询只返回特定的页码数据。它通过拦截 SQL 执行，自动为 SQL 语句添加分页参数（例如 LIMIT 和 OFFSET），从而实现分页效果。</p>
+<p><strong>分页配置</strong></p>
+<p>添加pom依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;com.baomidou&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;mybatis-plus-extension&lt;/artifactId&gt;</span><br><span class="line">	&lt;version&gt;3.5.9&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mybatis-plus-jsqlparser&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.5.9&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>创建分页拦截器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package com.example.springbootmybatisplustest.Config;</span><br><span class="line"></span><br><span class="line">import com.baomidou.mybatisplus.annotation.DbType;</span><br><span class="line">import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;</span><br><span class="line">import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;</span><br><span class="line">import org.springframework.context.annotation.Bean;</span><br><span class="line">import org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line">@Configuration</span><br><span class="line">public class MybatisPlusConfig &#123;</span><br><span class="line">    @Bean</span><br><span class="line">    public MybatisPlusInterceptor mybatisPlusInterceptor() &#123;</span><br><span class="line">        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();</span><br><span class="line">        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL)); // 如果配置多个插件, 切记分页最后添加</span><br><span class="line">        // 如果有多数据源可以不配具体类型, 否则都建议配上具体的 DbType</span><br><span class="line">        return interceptor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250226173055-dnlqsg9.png" alt="image">​</p>
+<p>编写控制器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">package com.example.springbootmybatisplustest.Controller;</span><br><span class="line"></span><br><span class="line">import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;</span><br><span class="line">import com.baomidou.mybatisplus.core.metadata.IPage;</span><br><span class="line">import com.baomidou.mybatisplus.core.metadata.OrderItem;</span><br><span class="line">import com.baomidou.mybatisplus.extension.plugins.pagination.Page;</span><br><span class="line">import com.example.springbootmybatisplustest.Service.PeopleService;</span><br><span class="line">import com.example.springbootmybatisplustest.Vo.People;</span><br><span class="line">import org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line">import org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line">import org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line">import org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line">import org.springframework.web.bind.annotation.RestController;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;/page&quot;)</span><br><span class="line">public class TestController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private PeopleService peopleService;</span><br><span class="line">    @GetMapping</span><br><span class="line">    public List&lt;People&gt; test(@RequestParam(&quot;page&quot;) int page, @RequestParam(&quot;size&quot;) int size)&#123;</span><br><span class="line">        //创建 QueryWrapper构建查询条件</span><br><span class="line">        QueryWrapper&lt;People&gt; qw = new QueryWrapper&lt;&gt;();</span><br><span class="line">        //创建 Page 对象，进行分页</span><br><span class="line">        Page&lt;People&gt; personPage = new Page&lt;&gt;(page, size);</span><br><span class="line">        // 调用 page 方法进行分页查询</span><br><span class="line">        IPage&lt;People&gt; iPage = peopleService.page(personPage, qw);</span><br><span class="line">        //取出数据进行封装</span><br><span class="line">        List&lt;People&gt; persons = iPage.getRecords();</span><br><span class="line">        return persons;</span><br><span class="line">  </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250226173804-h11cgr8.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250226173810-uz84ioc.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250226173822-uwh3mv1.png" alt="image">​</p>
+<p>而当PaginationInnerInterceptor使用了addOrder根据魔某个字段排序且未做任何其他过滤处理就存在sql注入问题。</p>
+<p>​<img src="/assets/image-20250301104436-bfgc3tk.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250301104454-ugbdxvz.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250301104515-wvzcg64.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250301104526-hgd0943.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250301104539-a4jfpnx.png" alt="image">​</p>
+<p>可以看到IF语句被成功带入到SQL语句中，同理同意存在如下问题的函数还有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">page.setOrders();</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250301111143-5jed1vb.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250301111203-u0we5an.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250301111215-kgr96v1.png" alt="image">​</p>
+<p>在一些老版本中，以下函数也会存在问题，新版本已废弃如下函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">page.setAsc();</span><br><span class="line">page.setDesc();</span><br><span class="line">page.setAscs();</span><br><span class="line">page.setDescs();</span><br></pre></td></tr></table></figure>
+
+<h4 id="pagehelper"><a href="#pagehelper" class="headerlink" title="pagehelper"></a>pagehelper</h4><p>PageHelper 是一个开源的 MyBatis 分页插件，它提供了简单易用的 API，可以方便地进行分页查询操作。使用 PageHelper 可以减少开发人员编写复杂的分页查询 SQL 语句的工作量，同时还支持多种数据库和多种分页方式。PageHelper 还提供了排序和筛选的功能，并且支持插件扩展，可以根据需求进行自定义。总的来说，PageHelper 是一个强大且方便的工具，可以大大简化在 MyBatis 中进行分页查询的操作。</p>
+<p>其原理和PaginationInnerInterceptor一样，都是在order by中不能预编译产生的sql注入</p>
+<p>在startPage传入排序参数</p>
+<p>​<img src="/assets/image-20250301114011-lkiskpm.png" alt="image">​</p>
+<p>跟进调用setOrderBy</p>
+<p>​<img src="/assets/image-20250301114044-ffaznmn.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250301114106-1l0h2u7.png" alt="image">​</p>
+<p>这时程序员在未做任何过滤的情况下就会产生sql注入问题。</p>
+<p>‍</p>
+<h3 id="条件构造器易产生sql注入的函数"><a href="#条件构造器易产生sql注入的函数" class="headerlink" title="条件构造器易产生sql注入的函数"></a>条件构造器易产生sql注入的函数</h3><h4 id="拼接类"><a href="#拼接类" class="headerlink" title="拼接类"></a>拼接类</h4><p><strong>apply</strong></p>
+<p>apply 方法是 MyBatis-Plus 中用于构建查询条件的高级方法之一，它允许你直接拼接 SQL 片段到查询条件中，而直接拼接就会存在sql注入的安全风险。</p>
+<p>正常查询</p>
+<p>​<img src="/assets/image-20250303104802-vfvp46k.png" alt="image">​</p>
+<p>sql注入查询</p>
+<p>​<img src="/assets/image-20250303104718-dt6wb20.png" alt="image">​</p>
+<p><strong>last</strong></p>
+<p>last 方法是 MyBatis-Plus 中用于构建查询条件的高级方法之一，它允许你直接在查询的最后添加一个 SQL 片段，而不受 MyBatis-Plus 的查询优化规则影响，此处类似直接拼接，参数可控的话同样存在sql注入问题。</p>
+<p>正常查询</p>
+<p>​<img src="/assets/image-20250303111344-wt0dcoc.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250303111356-fxi1m9c.png" alt="image">​</p>
+<p>sql注入查询</p>
+<p>​<img src="/assets/image-20250303111913-q5iwn9j.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250303111924-fqtdwll.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250303111940-f7mn4px.png" alt="image">​</p>
+<p>成功影响sql执行</p>
+<p><strong>其他拼接</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exists</span><br><span class="line">notExists</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250303113330-dkht123.png" alt="image">​</p>
+<p>‍</p>
+<p>‍</p>
+<h4 id="Order-by类"><a href="#Order-by类" class="headerlink" title="Order by类"></a>Order by类</h4><p>见名知意，sql注入常出现的位置，排序处</p>
+<p>常见函数如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">orderBy()</span><br><span class="line">orderByAsc()</span><br><span class="line">orderByDesc()</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250303105351-x6eme54.png" alt="image">​</p>
+<h4 id="insql类"><a href="#insql类" class="headerlink" title="insql类"></a>insql类</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">insql</span><br><span class="line">notinsql</span><br></pre></td></tr></table></figure>
+
+<p>本质是sql注入预编译中的in函数问题</p>
+<p>​<img src="/assets/image-20250303113750-gpqkq84.png" alt="image">​</p>
+<p>​<img src="/assets/image-20250303113830-azjug4u.png" alt="image">​</p>
+<h4 id="groupBy和having"><a href="#groupBy和having" class="headerlink" title="groupBy和having"></a>groupBy和having</h4><p>having 方法是 MyBatis-Plus 中用于构建查询条件的高级方法之一，它用于设置 HAVING 子句，通常与 GROUP BY 一起使用，用于对分组后的数据进行条件筛选。</p>
+<p>groupBy参数sql的原因本质是一般groupBy后面跟的参数都会被当作关键字使用，而使用预编译会让sql语句进行报错。having后面跟的内容假如没做任何过滤就相当于直接拼接进了sql语句，进而产生sql注入问题。</p>
+<p>‍</p>
+<p>‍</p>
+<p>‍</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io">随风</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io/2025/03/03/Mybatis-plus-sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/">http://suifeng-kali.github.io/2025/03/03/Mybatis-plus-sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://suifeng-kali.github.io" target="_blank">随风</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a><a class="post-meta__tags" href="/tags/sql%E6%B3%A8%E5%85%A5/">sql注入</a></div><div class="post_share"><div class="social-share" data-image="/assets/image-20250303104718-dt6wb20.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/03/03/K8s-configfile-%E6%B3%84%E9%9C%B2/" title="K8s configfile 泄露"><img class="cover" src="/assets/image-20250210152523-zbtjm30.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">K8s configfile 泄露</div></div></a></div><div class="next-post pull-right"><a href="/2025/03/03/Mybatis%20sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" title="Mybatis sql注入总结"><img class="cover" src="/assets/image-20250224185810-g59mrg8.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Mybatis sql注入总结</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/03/03/Mybatis%20sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" title="Mybatis sql注入总结"><img class="cover" src="/assets/image-20250224185810-g59mrg8.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-03</div><div class="title">Mybatis sql注入总结</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">随风</div><div class="author-info__description">记录与分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><a id="card-info-btn" href="/img/gzh.png"><i class="fa-brands fa-weixin"></i><span>关注我</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/suifeng-kali" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/img/vx.jpg" target="_blank" title="VX"><i class="fa-brands fa-weixin" style="color: #1BCB53;"></i></a><a class="social-icon" href="https://space.bilibili.com/266524390?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili" style="color: #F75887;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">在这分享分享自己的笔记，记录记录生活。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot%E6%95%B4%E5%90%88Mybatis-plus"><span class="toc-number">1.</span> <span class="toc-text">SpringBoot整合Mybatis-plus</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mybatis-plus%E7%9A%84%E6%8C%81%E4%B9%85%E5%B1%82%E4%BD%BF%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">Mybatis-plus的持久层使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E6%9E%84%E9%80%A0%E5%99%A8"><span class="toc-number">1.2.</span> <span class="toc-text">条件构造器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E5%B8%B8%E5%87%BA%E7%8E%B0%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">SQL注入常出现位置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E9%A1%B5%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84sql%E6%B3%A8%E5%85%A5"><span class="toc-number">2.1.</span> <span class="toc-text">分页场景下的sql注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PaginationInnerInterceptor"><span class="toc-number">2.1.1.</span> <span class="toc-text">PaginationInnerInterceptor</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pagehelper"><span class="toc-number">2.1.2.</span> <span class="toc-text">pagehelper</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E6%9E%84%E9%80%A0%E5%99%A8%E6%98%93%E4%BA%A7%E7%94%9Fsql%E6%B3%A8%E5%85%A5%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">条件构造器易产生sql注入的函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BC%E6%8E%A5%E7%B1%BB"><span class="toc-number">2.2.1.</span> <span class="toc-text">拼接类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Order-by%E7%B1%BB"><span class="toc-number">2.2.2.</span> <span class="toc-text">Order by类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#insql%E7%B1%BB"><span class="toc-number">2.2.3.</span> <span class="toc-text">insql类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#groupBy%E5%92%8Chaving"><span class="toc-number">2.2.4.</span> <span class="toc-text">groupBy和having</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/Docker-daemon2375%E7%AB%AF%E5%8F%A3%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2/" title="Docker daemon2375端口公网暴露"><img src="/assets/image-20250210112112-p4q20sr.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker daemon2375端口公网暴露"/></a><div class="content"><a class="title" href="/2025/03/03/Docker-daemon2375%E7%AB%AF%E5%8F%A3%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2/" title="Docker daemon2375端口公网暴露">Docker daemon2375端口公网暴露</a><time datetime="2025-03-03T12:18:00.000Z" title="发表于 2025-03-03 20:18:00">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/K8s-API-Server%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="K8s API Server未授权访问"><img src="/assets/image-20250211094312-jv1rb7b.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s API Server未授权访问"/></a><div class="content"><a class="title" href="/2025/03/03/K8s-API-Server%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="K8s API Server未授权访问">K8s API Server未授权访问</a><time datetime="2025-03-03T12:15:00.000Z" title="发表于 2025-03-03 20:15:00">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/K8s-configfile-%E6%B3%84%E9%9C%B2/" title="K8s configfile 泄露"><img src="/assets/image-20250210152523-zbtjm30.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s configfile 泄露"/></a><div class="content"><a class="title" href="/2025/03/03/K8s-configfile-%E6%B3%84%E9%9C%B2/" title="K8s configfile 泄露">K8s configfile 泄露</a><time datetime="2025-03-03T12:09:00.000Z" title="发表于 2025-03-03 20:09:00">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/Mybatis-plus-sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" title="Mybatis-plus sql注入总结"><img src="/assets/image-20250303104718-dt6wb20.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mybatis-plus sql注入总结"/></a><div class="content"><a class="title" href="/2025/03/03/Mybatis-plus-sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" title="Mybatis-plus sql注入总结">Mybatis-plus sql注入总结</a><time datetime="2025-03-03T11:57:00.000Z" title="发表于 2025-03-03 19:57:00">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/Mybatis%20sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" title="Mybatis sql注入总结"><img src="/assets/image-20250224185810-g59mrg8.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mybatis sql注入总结"/></a><div class="content"><a class="title" href="/2025/03/03/Mybatis%20sql%E6%B3%A8%E5%85%A5%E6%80%BB%E7%BB%93/" title="Mybatis sql注入总结">Mybatis sql注入总结</a><time datetime="2025-03-03T11:43:00.000Z" title="发表于 2025-03-03 19:43:00">2025-03-03</time></div></div></div></div></div></div></main><footer id="footer" style="background: black"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By 随风</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'SB4PGikNZrP3JAMCBJNWM9eC-gzGzoHsz',
+      appKey: 'DIgUpJL30T7a2KTMRAWkD2Zq',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,YOU,RedTeam,POC,EXP,Payload,SQLi,XSS,CSRF,XXE,Hack,Security,Sqlmap,Nmap,BurpSuite,Java,Python,Web,RCE,Root,Id,Whoami,CobaltStrike,Metasploit" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
